@@ -7,7 +7,7 @@ Super simple comment plugin that always uses single line comments
 - [Features](#features)
 - [Installation](#installation)
 - [Keybindings](#keybindings)
-- [Lazy load it](#lazy-load-it)
+- [Lazy load it](#lazy-load-it) **Quickstart**
 
 ## Features
 
