@@ -11,13 +11,20 @@ Super simple comment plugin that always uses single line comments
 
 ## Features
 
-1. Supports counts like 5gcc and commenting in front of the current line
+1. Supports counts like 5{comment} and commenting in front of the current line
 
-2. Simplest plugin of them all, it uses a single function for everything, no
-   fancy features, can be lazy-loaded very easily
+2. Simplest plugin of them all **~100 loc**, has all the fancy features
 
 3. Compatible with [nvim-ts-context-commentstring](https://github.com/JoosepAlviste/nvim-ts-context-commentstring), turns its results into single line comments,
    **See how to enable it below**
+
+4. Single line comments avoid unexpected results when commenting:
+   - uncomments only when all the text selected is commented, avoiding confusion
+     when getting big blocks of code out of the way for debugging
+   - always comments at the most shallow comment avoiding weird indentation
+     issues
+   - when you have block comments at the end of lines other plugins fail on
+     the simple task of getting this line out of the way, this plugin will **never** fail
 
 ## Installation
 
