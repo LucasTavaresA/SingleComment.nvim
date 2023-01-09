@@ -19,7 +19,7 @@ function M.SingleCommentAhead()
 
   vim.api.nvim_set_current_line(line)
 
-  if comment[2] ~= nil then
+  if comment[2] ~= "" then
     vim.api.nvim_input("A" .. string.rep("<left>", #comment[2]))
   else
     vim.api.nvim_input("A ")
