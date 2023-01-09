@@ -5,6 +5,7 @@ local comments = require("SingleComment.kinds")
 
 --- inserts a comment at the end of the current line
 function M.SingleCommentAhead()
+  -- get comment according to filetype
   local comment
   if comments[vim.o.ft] then
     comment = comments[vim.o.ft]
@@ -19,6 +20,7 @@ function M.SingleCommentAhead()
 
   vim.api.nvim_set_current_line(line)
 
+  -- position the cursor in insert mode
   if comment[2] ~= "" then
     vim.api.nvim_input("A" .. string.rep("<left>", #comment[2]))
   else
@@ -28,6 +30,7 @@ end
 
 --- comments single lines
 function M.SingleComment()
+  -- get comment according to filetype
   local comment
   if comments[vim.o.ft] then
     comment = comments[vim.o.ft]
@@ -48,6 +51,7 @@ function M.SingleComment()
     pos = { endRow, col }
   end
 
+  -- account for counts
   if count ~= 0 then
     endRow = endRow + count - 1
   end
@@ -55,15 +59,18 @@ function M.SingleComment()
   local lines = vim.api.nvim_buf_get_lines(0, startRow - 1, endRow, true)
   local indent = string.match(lines[1], "^%s*")
   local tmpindent
-
   local uncomment
+
+  -- check indentation and comment state of all lines for use later
   for i, _ in ipairs(lines) do
     if not lines[i]:match("^%s*$") then
+      -- gets the shallowest comment indentation for commenting
       tmpindent = lines[i]:match("^%s*")
       if indent:len() > tmpindent:len() then
         indent = tmpindent
       end
 
+      -- uncomment only when all the lines are commented
       if
         uncomment == nil
         and not lines[i]:match("^" .. indent .. vim.pesc(comment[1]))
@@ -73,6 +80,7 @@ function M.SingleComment()
     end
   end
 
+  -- comment or uncomment all lines
   for i, _ in ipairs(lines) do
     if not lines[i]:match("^%s*$") then
       lines[i] = string.gsub(lines[i], "^" .. indent, "")
