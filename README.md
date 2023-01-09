@@ -26,6 +26,8 @@ Super simple comment plugin that always uses single line comments
    - when you have block comments at the end of lines other plugins fail on
      the simple task of getting this line out of the way, this plugin will **never** fail
 
+- i need help to make it dot repeatable 🥺
+
 ## Installation
 
 [packer.nvim](https://github.com/wbthomason/packer.nvim):
