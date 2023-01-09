@@ -1,17 +1,42 @@
 ---@type table
 local M = {}
----@type table
-local comments = require("SingleComment.kinds")
+---@type table block comments that can be changed to line comments
+local blocks = {
+  ["/*"] = { "// ", "" },
+  ["<!--"] = { "<!-- ", " -->" },
+}
+
+---@return table
+--- returns a table with the comment beginning/end
+local function GetComment()
+  local comment = {}
+
+  -- get commentstring using ts_context_commentstring
+  if vim.g.SC_ts_context then
+    require("ts_context_commentstring.internal").update_commentstring({})
+  end
+
+  local commentstring = vim.bo.commentstring
+
+  for pieces in string.gmatch(commentstring, "([^%%s]+)") do
+    table.insert(comment, pieces)
+  end
+
+  -- try to turn block into single line comment
+  if blocks[comment[1]] then
+    comment = blocks[comment[1]]
+  end
+
+  if comment[2] == nil then
+    comment[2] = ""
+  end
+
+  return comment
+end
 
 --- inserts a comment at the end of the current line
 function M.SingleCommentAhead()
-  -- get comment according to filetype
-  local comment
-  if comments[vim.o.ft] then
-    comment = comments[vim.o.ft]
-  else
-    comment = { "", "" }
-  end
+  local comment = GetComment()
 
   local line = vim.api.nvim_get_current_line()
     .. " "
@@ -30,14 +55,7 @@ end
 
 --- comments single lines
 function M.SingleComment()
-  -- get comment according to filetype
-  local comment
-  if comments[vim.o.ft] then
-    comment = comments[vim.o.ft]
-  else
-    comment = { "", "" }
-  end
-
+  local comment = GetComment()
   local count = vim.v.count
   local col = vim.fn.col(".") - 1
   local startRow, endRow = vim.fn.line("v"), vim.fn.line(".")

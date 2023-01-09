@@ -11,28 +11,38 @@ Super simple comment plugin that always uses single line comments
 
 ## Features
 
-1. Always comments single lines, **Never get confused again** XD
+1. Supports counts like 5gcc and commenting in front of the current line
 
-2. Supports counts like 5gcc and commenting in front of the current line
-
-3. Simplest plugin of them all, it uses a single function for everything, no
+2. Simplest plugin of them all, it uses a single function for everything, no
    fancy features, can be lazy-loaded very easily
 
-4. Has great language support with a lua table made by hand, this is empowered by single line comments,
-   **please help adding more languages**
+3. Compatible with [nvim-ts-context-commentstring](https://github.com/JoosepAlviste/nvim-ts-context-commentstring), turns its results into single line comments,
+   **See how to enable it below**
 
 ## Installation
 
 [packer.nvim](https://github.com/wbthomason/packer.nvim):
 
 ```lua
-use "lucastavaresa/SingleComment.nvim"
+use {
+  "lucastavaresa/SingleComment.nvim",
+  -- requires = "JoosepAlviste/nvim-ts-context-commentstring", -- ts-context-commentstring support
+  setup = function()
+    -- vim.g.SC_ts_context = true -- ts-context-commentstring support
+  end
+}
 ```
 
 [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
-"lucastavaresa/SingleComment.nvim"
+{
+  "lucastavaresa/SingleComment.nvim",
+  -- dependencies = "JoosepAlviste/nvim-ts-context-commentstring", -- ts-context-commentstring support
+  init = function()
+    -- vim.g.SC_ts_context = true -- ts-context-commentstring support
+  end
+}
 ```
 
 ## Keybindings
@@ -57,7 +67,9 @@ Those commands substitute all the above
     "lucastavaresa/SingleComment.nvim",
     opt = true,
     keybindings = { { { "n", "v" }, "gcc" }, { "n", "gca" } },
+    requires = "JoosepAlviste/nvim-ts-context-commentstring", -- ts-context-commentstring support
     setup = function()
+      vim.g.SC_ts_context = true -- ts-context-commentstring support
       vim.keymap.set({ "n", "v" }, "gcc", require("SingleComment").SingleComment)
       vim.keymap.set("n", "gca", require("SingleComment").SingleCommentAhead)
     end
@@ -70,6 +82,10 @@ Those commands substitute all the above
   {
     "lucastavaresa/SingleComment.nvim",
     lazy = true,
+    dependencies = "JoosepAlviste/nvim-ts-context-commentstring", -- ts-context-commentstring support
+    init = function()
+      vim.g.SC_ts_context = true -- ts-context-commentstring support
+    end,
     keys = {
       {
         "gcc",
