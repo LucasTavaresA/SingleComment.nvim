@@ -54,13 +54,21 @@ function M.SingleComment()
 
   local lines = vim.api.nvim_buf_get_lines(0, startRow - 1, endRow, true)
   local indent = string.match(lines[1], "^%s*")
+  local tmpindent
 
   local uncomment
   for i, _ in ipairs(lines) do
     if not lines[i]:match("^%s*$") then
-      if not lines[i]:match("^" .. indent .. vim.pesc(comment[1])) then
+      tmpindent = lines[i]:match("^%s*")
+      if indent:len() > tmpindent:len() then
+        indent = tmpindent
+      end
+
+      if
+        uncomment == nil
+        and not lines[i]:match("^" .. indent .. vim.pesc(comment[1]))
+      then
         uncomment = true
-        break
       end
     end
   end
