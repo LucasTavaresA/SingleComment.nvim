@@ -1,23 +1,21 @@
 ---@type table
 local M = {}
 ---@type table
-local blockcomments = require("SingleComment.kinds").blockcomments
----@type table
-local comments = require("SingleComment.kinds").comments
+local comments = require("SingleComment.kinds")
 
 --- inserts a comment at the end of the current line
 function M.SingleCommentAhead()
   local comment
-  if blockcomments[vim.o.ft] ~= nil then
-    comment = blockcomments[vim.o.ft]
-  else
+  if comments[vim.o.ft] then
     comment = comments[vim.o.ft]
+  else
+    comment = { "", "" }
   end
 
   local line = vim.api.nvim_get_current_line()
     .. " "
     .. comment[1]
-    .. (comment[2] or "")
+    .. comment[2]
 
   vim.api.nvim_set_current_line(line)
 
@@ -31,10 +29,10 @@ end
 --- comments single lines
 function M.SingleComment()
   local comment
-  if blockcomments[vim.o.ft] ~= nil then
-    comment = blockcomments[vim.o.ft]
-  else
+  if comments[vim.o.ft] then
     comment = comments[vim.o.ft]
+  else
+    comment = { "", "" }
   end
 
   local count = vim.v.count
@@ -74,9 +72,9 @@ function M.SingleComment()
       if not uncomment then
         lines[i] = lines[i]
           :gsub("^" .. vim.pesc(comment[1]), indent)
-          :gsub(vim.pesc(comment[2] or "") .. "$", "")
+          :gsub(vim.pesc(comment[2]) .. "$", "")
       else
-        lines[i] = indent .. comment[1] .. lines[i] .. (comment[2] or "")
+        lines[i] = indent .. comment[1] .. lines[i] .. comment[2]
       end
     end
   end
