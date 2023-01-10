@@ -35,9 +35,8 @@ Super simple comment plugin that always uses single line comments
 ```lua
 use {
   "lucastavaresa/SingleComment.nvim",
-  -- requires = "JoosepAlviste/nvim-ts-context-commentstring", -- ts-context-commentstring support
   setup = function()
-    -- vim.g.SC_ts_context = true -- ts-context-commentstring support
+    -- vim.g.SC_ts_context = true -- enable ts-context-commentstring
   end
 }
 ```
@@ -47,9 +46,8 @@ use {
 ```lua
 {
   "lucastavaresa/SingleComment.nvim",
-  -- dependencies = "JoosepAlviste/nvim-ts-context-commentstring", -- ts-context-commentstring support
   init = function()
-    -- vim.g.SC_ts_context = true -- ts-context-commentstring support
+    -- vim.g.SC_ts_context = true -- enable ts-context-commentstring
   end
 }
 ```
@@ -76,11 +74,18 @@ Those commands substitute all the above
     "lucastavaresa/SingleComment.nvim",
     opt = true,
     keybindings = { { { "n", "v" }, "gcc" }, { "n", "gca" } },
-    requires = "JoosepAlviste/nvim-ts-context-commentstring", -- ts-context-commentstring support
+    requires = {
+      "nvim-treesitter/nvim-treesitter",
+      "JoosepAlviste/nvim-ts-context-commentstring"
+    },
     setup = function()
-      vim.g.SC_ts_context = true -- ts-context-commentstring support
-      vim.keymap.set({ "n", "v" }, "gcc", require("SingleComment").SingleComment)
-      vim.keymap.set("n", "gca", require("SingleComment").SingleCommentAhead)
+      vim.g.SC_ts_context = true -- enable ts-context-commentstring support
+      vim.keymap.set({ "n", "v" }, "gcc", function()
+        require("SingleComment").SingleComment()
+      end)
+      vim.keymap.set("n", "gca", function()
+        require("SingleComment").SingleCommentAhead()
+      end)
     end
   }
 ```
@@ -91,9 +96,12 @@ Those commands substitute all the above
   {
     "lucastavaresa/SingleComment.nvim",
     lazy = true,
-    dependencies = "JoosepAlviste/nvim-ts-context-commentstring", -- ts-context-commentstring support
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "JoosepAlviste/nvim-ts-context-commentstring"
+    },
     init = function()
-      vim.g.SC_ts_context = true -- ts-context-commentstring support
+      vim.g.SC_ts_context = true -- enable ts-context-commentstring support
     end,
     keys = {
       {
