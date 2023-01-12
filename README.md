@@ -26,8 +26,6 @@ Super simple comment plugin that always uses single line comments
    - when you have block comments at the end of lines other plugins fail on
      the simple task of getting this line out of the way, this plugin will **never** fail
 
-- i need help to make it dot repeatable 🥺
-
 ## Installation
 
 [packer.nvim](https://github.com/wbthomason/packer.nvim):
@@ -59,8 +57,9 @@ You need to set those to use SingleComment.nvim
 Those are all the available functions:
 
 ```lua
-vim.keymap.set({ "n", "v" }, "gcc", require("SingleComment").SingleComment)
-vim.keymap.set("n", "gca", require("SingleComment").SingleCommentAhead)
+vim.keymap.set("n", "gcc", require("SingleComment").SingleComment, { expr = true })
+vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
+vim.keymap.set("n", "gca", require("SingleComment").SingleCommentAhead, {})
 ```
 
 ## Lazy load it
@@ -80,12 +79,14 @@ Those commands substitute all the above
     },
     setup = function()
       vim.g.SC_ts_context = true -- enable ts-context-commentstring support
-      vim.keymap.set({ "n", "v" }, "gcc", function()
-        require("SingleComment").SingleComment()
-      end)
-      vim.keymap.set("n", "gca", function()
-        require("SingleComment").SingleCommentAhead()
-      end)
+      vim.keymap.set(
+        "n",
+        "gcc",
+        require("SingleComment").SingleComment,
+        { expr = true }
+      )
+      vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
+      vim.keymap.set("n", "gca", require("SingleComment").SingleCommentAhead, {})
     end
   }
 ```
@@ -102,21 +103,14 @@ Those commands substitute all the above
     },
     init = function()
       vim.g.SC_ts_context = true -- enable ts-context-commentstring support
-    end,
-    keys = {
-      {
+      vim.keymap.set(
+        "n",
         "gcc",
-        function()
-          require("SingleComment").SingleComment()
-        end,
-        mode = { "n", "v" },
-      },
-      {
-        "gca",
-        function()
-          require("SingleComment").SingleCommentAhead()
-        end,
-      },
-    },
+        require("SingleComment").SingleComment,
+        { expr = true }
+      )
+      vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
+      vim.keymap.set("n", "gca", require("SingleComment").SingleCommentAhead, {})
+    end,
   },
 ```

@@ -53,8 +53,15 @@ function M.SingleCommentAhead()
   end
 end
 
---- comments single lines
+-- handles dotrepeat when commenting which does not work with visual mode
+-- for visual comments use require'SingleComment'.Comment()
 function M.SingleComment()
+  vim.go.operatorfunc = "v:lua.require'SingleComment'.Comment"
+  return "g@l"
+end
+
+--- comments single lines whenever possible
+function M.Comment()
   local comment = GetComment()
   local count = vim.v.count
   local col = vim.fn.col(".") - 1
