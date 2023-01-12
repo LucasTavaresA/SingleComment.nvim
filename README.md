@@ -11,9 +11,12 @@ Super simple comment plugin that always uses single line comments
 
 ## Features
 
-1. Supports counts like 5{comment} and commenting in front of the current line
+1. Supports
+   - counts like 5{comment} and dotrepeat
+   - commenting in front of the current line
+   - toggling a comment in front/top of the current line
 
-2. Simplest plugin of them all **~100 loc**, has all the fancy features
+2. Simplest plugin of them all **~150 loc** in a single file
 
 3. Compatible with [nvim-ts-context-commentstring](https://github.com/JoosepAlviste/nvim-ts-context-commentstring), turns its results into single line comments,
    **See how to enable it below**
@@ -57,9 +60,14 @@ You need to set those to use SingleComment.nvim
 Those are all the available functions:
 
 ```lua
+-- comments the current line, or a number of lines 5gcc
 vim.keymap.set("n", "gcc", require("SingleComment").SingleComment, { expr = true })
+-- comments the selected lines
 vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
-vim.keymap.set("n", "gca", require("SingleComment").SingleCommentAhead, {})
+-- toggle a comment top/ahead of the current line
+vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
+-- comments ahead of the current line
+vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
 ```
 
 ## Lazy load it
@@ -86,7 +94,8 @@ Those commands substitute all the above
         { expr = true }
       )
       vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
-      vim.keymap.set("n", "gca", require("SingleComment").SingleCommentAhead, {})
+      vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
+      vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
     end
   }
 ```
@@ -110,7 +119,8 @@ Those commands substitute all the above
         { expr = true }
       )
       vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
-      vim.keymap.set("n", "gca", require("SingleComment").SingleCommentAhead, {})
+      vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
+      vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
     end,
   },
 ```

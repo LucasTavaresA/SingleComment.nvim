@@ -34,8 +34,35 @@ local function GetComment()
   return comment
 end
 
+--- toggle a comment top/ahead of the current line
+function M.ToggleCommentAhead()
+  local curpos = vim.fn.line(".")
+  local comment = vim.pesc(GetComment()[1])
+  local lines = vim.api.nvim_buf_get_lines(0, curpos - 2, curpos + 1, true)
+  local indent = lines[2]:match("^%s*")
+
+  if lines[2]:find("^" .. indent .. comment .. ".*") then
+    lines[3] = lines[3] .. " " .. lines[2]:match("^" .. indent .. "(.*)$")
+
+    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, true, lines)
+    vim.fn.deletebufline(0, curpos)
+  elseif lines[2]:find(comment) then
+    local comment_text = lines[2]:match(comment .. ".*")
+    lines[4] = lines[3]
+    lines[3] = lines[2]:match("(.-) " .. comment)
+    lines[2] = indent .. comment_text
+
+    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, true, lines)
+  elseif lines[1]:find("^" .. indent .. comment) then
+    lines[2] = lines[2] .. " " .. lines[1]:match("^" .. indent .. "(.*)$")
+
+    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, true, lines)
+    vim.fn.deletebufline(0, curpos - 1)
+  end
+end
+
 --- inserts a comment at the end of the current line
-function M.SingleCommentAhead()
+function M.CommentAhead()
   local comment = GetComment()
 
   local line = vim.api.nvim_get_current_line()
