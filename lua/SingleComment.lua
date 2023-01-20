@@ -3,13 +3,20 @@ local M = {}
 ---@type table block comments that can be changed to line comments
 local blocks = {
   ["/*"] = { "// ", "" },
+  ["/* "] = { "// ", "" },
   ["<!--"] = { "<!-- ", " -->" },
+}
+---@type table filetypes that behave
+local exceptions = {
+  json = { "// ", "" },
+  css = { "/* ", " */" },
 }
 
 ---@return table
 --- returns a table with the comment beginning/end
 local function GetComment()
   local comment = {}
+  local filetype = vim.bo.ft
 
   -- get commentstring using ts_context_commentstring
   if vim.g.SC_ts_context then
@@ -18,17 +25,23 @@ local function GetComment()
 
   local commentstring = vim.bo.commentstring
 
-  for pieces in string.gmatch(commentstring, "([^%%s]+)") do
-    table.insert(comment, pieces)
-  end
+  if exceptions[filetype] ~= nil then
+    comment = exceptions[filetype]
+  elseif commentstring == "" or commentstring == nil then
+    comment = { "/* ", " */" }
+  else
+    for pieces in string.gmatch(commentstring, "([^%%s]+)") do
+      table.insert(comment, pieces)
+    end
 
-  -- try to turn block into single line comment
-  if blocks[comment[1]] then
-    comment = blocks[comment[1]]
-  end
+    -- try to turn block into single line comment
+    if blocks[comment[1]] then
+      comment = blocks[comment[1]]
+    end
 
-  if comment[2] == nil then
-    comment[2] = ""
+    if comment[2] == nil then
+      comment[2] = ""
+    end
   end
 
   return comment
