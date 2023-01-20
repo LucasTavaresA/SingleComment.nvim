@@ -38,14 +38,14 @@ end
 function M.ToggleCommentAhead()
   local curpos = vim.fn.line(".")
   local comment = vim.pesc(GetComment()[1])
-  local lines = vim.api.nvim_buf_get_lines(0, curpos - 2, curpos + 1, true)
+  local lines = vim.api.nvim_buf_get_lines(0, curpos - 2, curpos + 1, false)
   local indent = lines[2]:match("^%s*")
 
   if lines[3]:find(comment) then
   elseif lines[2]:find("^" .. indent .. comment .. ".*") then
     lines[3] = lines[3] .. " " .. lines[2]:match("^" .. indent .. "(.*)$")
 
-    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, true, lines)
+    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, false, lines)
     vim.fn.deletebufline(0, curpos)
   elseif lines[2]:find(comment) then
     local comment_text = lines[2]:match(comment .. ".*")
@@ -53,11 +53,11 @@ function M.ToggleCommentAhead()
     lines[3] = lines[2]:match("(.-) " .. comment)
     lines[2] = indent .. comment_text
 
-    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, true, lines)
+    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, false, lines)
   elseif lines[1]:find("^" .. indent .. comment) then
     lines[2] = lines[2] .. " " .. lines[1]:match("^" .. indent .. "(.*)$")
 
-    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, true, lines)
+    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, false, lines)
     vim.fn.deletebufline(0, curpos - 1)
   end
 end
@@ -109,7 +109,7 @@ function M.Comment()
     endRow = endRow + count - 1
   end
 
-  local lines = vim.api.nvim_buf_get_lines(0, startRow - 1, endRow, true)
+  local lines = vim.api.nvim_buf_get_lines(0, startRow - 1, endRow, false)
   local indent = string.match(lines[1], "^%s*")
   local tmpindent
   local uncomment
@@ -148,7 +148,7 @@ function M.Comment()
     end
   end
 
-  vim.api.nvim_buf_set_lines(0, startRow - 1, endRow, true, lines)
+  vim.api.nvim_buf_set_lines(0, startRow - 1, endRow, false, lines)
   vim.api.nvim_input("<esc>")
   vim.api.nvim_win_set_cursor(0, pos)
 end
