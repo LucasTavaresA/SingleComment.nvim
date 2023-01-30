@@ -49,29 +49,30 @@ end
 
 --- toggle a comment top/ahead of the current line
 function M.ToggleCommentAhead()
+  local bufnr = vim.api.nvim_get_current_buf()
   local curpos = vim.fn.line(".")
   local comment = vim.pesc(GetComment()[1])
-  local lines = vim.api.nvim_buf_get_lines(0, curpos - 2, curpos + 1, false)
+  local lines = vim.api.nvim_buf_get_lines(bufnr, curpos - 2, curpos + 1, false)
   local indent = lines[2]:match("^%s*")
 
   if lines[3]:find(comment) then
   elseif lines[2]:find("^" .. indent .. comment .. ".*") then
     lines[3] = lines[3] .. " " .. lines[2]:match("^" .. indent .. "(.*)$")
 
-    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, false, lines)
-    vim.fn.deletebufline(0, curpos)
+    vim.api.nvim_buf_set_lines(bufnr, curpos - 2, curpos + 1, false, lines)
+    vim.fn.deletebufline(bufnr, curpos)
   elseif lines[2]:find(comment) then
     local comment_text = lines[2]:match(comment .. ".*")
     lines[4] = lines[3]
     lines[3] = lines[2]:match("(.-) " .. comment)
     lines[2] = indent .. comment_text
 
-    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, false, lines)
+    vim.api.nvim_buf_set_lines(bufnr, curpos - 2, curpos + 1, false, lines)
   elseif lines[1]:find("^" .. indent .. comment) then
     lines[2] = lines[2] .. " " .. lines[1]:match("^" .. indent .. "(.*)$")
 
-    vim.api.nvim_buf_set_lines(0, curpos - 2, curpos + 1, false, lines)
-    vim.fn.deletebufline(0, curpos - 1)
+    vim.api.nvim_buf_set_lines(bufnr, curpos - 2, curpos + 1, false, lines)
+    vim.fn.deletebufline(bufnr, curpos - 1)
   end
 end
 
@@ -103,6 +104,8 @@ end
 
 --- comments single lines whenever possible
 function M.Comment()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local winnr = vim.api.nvim_get_current_win()
   local comment = GetComment()
   local count = vim.v.count
   local col = vim.fn.col(".") - 1
@@ -122,7 +125,7 @@ function M.Comment()
     endRow = endRow + count - 1
   end
 
-  local lines = vim.api.nvim_buf_get_lines(0, startRow - 1, endRow, false)
+  local lines = vim.api.nvim_buf_get_lines(bufnr, startRow - 1, endRow, false)
   local indent = string.match(lines[1], "^%s*")
   local tmpindent
   local uncomment
@@ -161,9 +164,9 @@ function M.Comment()
     end
   end
 
-  vim.api.nvim_buf_set_lines(0, startRow - 1, endRow, false, lines)
+  vim.api.nvim_buf_set_lines(bufnr, startRow - 1, endRow, false, lines)
   vim.api.nvim_input("<esc>")
-  vim.api.nvim_win_set_cursor(0, pos)
+  vim.api.nvim_win_set_cursor(winnr, pos)
 end
 
 return M
