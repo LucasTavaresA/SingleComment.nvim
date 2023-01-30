@@ -76,7 +76,9 @@ function M.ToggleCommentAhead()
     vim.api.nvim_buf_set_lines(bufnr, curpos - 2, curpos + 1, false, lines)
     vim.cmd("normal ==")
   elseif
-    lines[1]:find("^" .. indent .. comment) and not lines[2]:find(comment)
+    lines[1]:find(comment)
+    and not lines[2]:find(comment)
+    and not lines[2] == ""
   then
     lines[2] = lines[2] .. " " .. lines[1]:match(comment .. ".*")
 
