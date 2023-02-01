@@ -54,16 +54,17 @@ function M.ToggleCommentAhead()
   local comment = vim.pesc(GetComment()[1])
   local lines = vim.api.nvim_buf_get_lines(bufnr, curpos - 2, curpos + 1, false)
 
-  if lines[3]:find(comment) then
-    return
-  end
-
-  if lines[2]:find("^%s*" .. comment) and not lines[3]:match("^%s*$") then
+  if
+    lines[2]:find("^%s*" .. comment)
+    and not (lines[3]:match(comment) or lines[3]:match("^%s*$"))
+  then
     lines[3] = lines[3] .. " " .. lines[2]:match("^%s*(.*)")
 
     vim.api.nvim_buf_set_lines(bufnr, curpos - 2, curpos + 1, false, lines)
     vim.cmd("normal dd")
-  elseif lines[2]:find("%S+%s+" .. comment) then
+  elseif
+    not lines[2]:match("^%s*" .. comment) and lines[2]:find("%S+%s+" .. comment)
+  then
     local comment_text = lines[2]:match(comment .. ".*")
     lines[4] = lines[3]
     lines[3] = lines[2]:match("(.-) " .. comment)
