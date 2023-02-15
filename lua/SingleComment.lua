@@ -10,6 +10,7 @@ local blocks = {
 local exceptions = {
   json = { "// ", "" },
   css = { "/* ", " */" },
+  nelua = { "-- ", "" },
 }
 
 ---@return table
