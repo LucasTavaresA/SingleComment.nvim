@@ -14,7 +14,7 @@ Super simple comment plugin that always uses single line comments
 1. Supports
    - counts like 5{comment} and dotrepeat
    - commenting in front of the current line
-   - toggling a comment in front/top of the current line
+   - toggling a comment in front/top of the current line, [preview](#commentahead)
 
 2. Simplest plugin of them all **~150 loc** in a single file
 
@@ -110,35 +110,16 @@ Those commands substitute all the above
       "nvim-treesitter/nvim-treesitter",
       "JoosepAlviste/nvim-ts-context-commentstring"
     },
-    keys = {
-      {
-        "gcc",
-        function()
-          require("SingleComment").SingleComment()
-        end,
-        expr = true,
-      },
-      {
-        "gcc",
-        function()
-          require("SingleComment").Comment()
-        end,
-      },
-      {
-        "gca",
-        function()
-            require("SingleComment").ToggleCommentAhead()
-        end,
-      },
-      {
-          "gcA",
-        function()
-          require("SingleComment").CommentAhead()
-        end,
-      },
-    },
     init = function()
       vim.g.SC_ts_context = true -- enable ts-context-commentstring support
+      vim.keymap.set("n", "gcc", require("SingleComment").SingleComment, { expr = true })
+      vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
+      vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
+      vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
     end,
   },
 ```
+
+## CommentAhead
+
+[![asciicast](https://asciinema.org/a/NAIVgm9maDJ5QN2gfrehAaVyA.svg)](https://asciinema.org/a/NAIVgm9maDJ5QN2gfrehAaVyA)
