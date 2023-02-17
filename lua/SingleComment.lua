@@ -51,36 +51,40 @@ end
 --- toggle a comment top/ahead of the current line
 function M.ToggleCommentAhead()
   local bufnr = vim.api.nvim_get_current_buf()
-  local curpos = vim.fn.line(".")
+  local winnr = vim.api.nvim_get_current_win()
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
   local comment = vim.pesc(GetComment()[1])
-  local lines = vim.api.nvim_buf_get_lines(bufnr, curpos - 2, curpos + 1, false)
+  local col = vim.fn.col(".")
+  local c = vim.fn.line(".")
+  local t = c - 1
+  local b = c + 1
 
   if
-    lines[2]:find("^%s*" .. comment)
-    and not (lines[3]:match(comment) or lines[3]:match("^%s*$"))
+    lines[b] ~= nil
+    and lines[c]:find("^%s*" .. comment)
+    and not (lines[b]:match(comment) or lines[b]:match("^%s*$"))
   then
-    lines[3] = lines[3] .. " " .. lines[2]:match("^%s*(.*)")
+    lines[c] = lines[b] .. " " .. lines[c]:match("^%s*(.*)")
+    table.remove(lines, b)
 
-    vim.api.nvim_buf_set_lines(bufnr, curpos - 2, curpos + 1, false, lines)
-    vim.cmd("normal dd")
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+  elseif lines[c]:find("%S+%s+" .. comment) then
+    local text, comment_text = lines[c]:match("(.*) (" .. comment .. ".*)")
+    table.insert(lines, c, comment_text)
+    lines[c + 1] = text
+
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+    vim.api.nvim_feedkeys("==zv", "n", false)
   elseif
-    not lines[2]:match("^%s*" .. comment) and lines[2]:find("%S+%s+" .. comment)
+    lines[t] ~= nil
+    and lines[t]:find("^%s*" .. comment)
+    and not (lines[c]:find(comment) or lines[c]:match("^%s*$"))
   then
-    local comment_text = lines[2]:match(comment .. ".*")
-    lines[4] = lines[3]
-    lines[3] = lines[2]:match("(.-) " .. comment)
-    lines[2] = comment_text
+    lines[c] = lines[c] .. " " .. lines[t]:match(comment .. ".*")
+    table.remove(lines, t)
 
-    vim.api.nvim_buf_set_lines(bufnr, curpos - 2, curpos + 1, false, lines)
-    vim.cmd("normal ==")
-  elseif
-    lines[1]:find("^%s*" .. comment)
-    and not (lines[2]:find(comment) or lines[2]:match("^%s*$"))
-  then
-    lines[2] = lines[2] .. " " .. lines[1]:match(comment .. ".*")
-
-    vim.api.nvim_buf_set_lines(bufnr, curpos - 2, curpos + 1, false, lines)
-    vim.cmd("normal kdd")
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+    vim.api.nvim_win_set_cursor(winnr, { t, col })
   end
 end
 
