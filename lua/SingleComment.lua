@@ -58,6 +58,7 @@ function M.ToggleCommentAhead()
   local c = vim.fn.line(".")
   local t = c - 1
   local b = c + 1
+  local feedlines = ""
 
   if
     lines[b] ~= nil
@@ -66,15 +67,11 @@ function M.ToggleCommentAhead()
   then
     lines[c] = lines[b] .. " " .. lines[c]:match("^%s*(.*)")
     table.remove(lines, b)
-
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   elseif lines[c]:find("%S+%s+" .. comment) then
     local text, comment_text = lines[c]:match("(.*) (" .. comment .. ".*)")
     table.insert(lines, c, comment_text)
     lines[c + 1] = text
-
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-    vim.api.nvim_feedkeys("==zv", "n", false)
+    feedlines = "==zv"
   elseif
     lines[t] ~= nil
     and lines[t]:find("^%s*" .. comment)
@@ -82,10 +79,12 @@ function M.ToggleCommentAhead()
   then
     lines[c] = lines[c] .. " " .. lines[t]:match(comment .. ".*")
     table.remove(lines, t)
-
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-    vim.api.nvim_win_set_cursor(winnr, { t, col })
+    c = c - 1
   end
+
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+  vim.api.nvim_win_set_cursor(winnr, { c, col })
+  vim.api.nvim_feedkeys(feedlines, "n", false)
 end
 
 --- inserts a comment at the end of the current line
