@@ -121,14 +121,10 @@ function M.Comment()
   local count = vim.v.count
   local col = vim.fn.col(".") - 1
   local startRow, endRow = vim.fn.line("v"), vim.fn.line(".")
-  local pos = { startRow, col }
 
   -- in case the selection starts from the bottom
   if startRow > endRow then
-    local tmp = startRow
-    startRow = endRow
-    endRow = tmp
-    pos = { endRow, col }
+    startRow, endRow = endRow, startRow
   end
 
   -- account for counts
@@ -177,7 +173,7 @@ function M.Comment()
 
   vim.api.nvim_buf_set_lines(bufnr, startRow - 1, endRow, false, lines)
   vim.api.nvim_input("<esc>")
-  vim.api.nvim_win_set_cursor(winnr, pos)
+  vim.api.nvim_win_set_cursor(winnr, { startRow, col })
 end
 
 return M
