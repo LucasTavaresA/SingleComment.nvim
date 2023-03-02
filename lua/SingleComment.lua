@@ -54,7 +54,7 @@ function M.ToggleCommentAhead()
   local winnr = vim.api.nvim_get_current_win()
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
   local comment = vim.pesc(GetComment()[1])
-  local col = vim.fn.col(".")
+  local col = vim.fn.col(".") - 1
   local c = vim.fn.line(".")
   local t = c - 1
   local b = c + 1
