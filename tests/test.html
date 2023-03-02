@@ -1,0 +1,54 @@
+<!-- Tests for commenting in visual and normal mode -->
+<!-- and for creating comments ahead of the line -->
+<h1>comment/uncomment a single line</h1>
+
+<div>
+  <!---->
+
+  <!-- ^ start a comment when the line is empty, with indentation -->
+</div>
+
+<!--
+  dotrepeat and counts should work to comment/uncomment
+
+  In visual mode test reverse selections
+  by using `o` to reverse the selection
+-->
+<div>
+  <p>something</p>
+
+  <p>^ empty lines are completely ignored</p>
+  <!-- uncomment only when all selected lines are commented -->
+  <!-- <p>some text</p> -->
+  <!-- <p>some more text</p> -->
+</div>
+
+<!-- Tests for toggling comments ahead/top -->
+
+<!-- should do nothing to this line -->
+
+<!-- shold not join those comments together -->
+<!-- no matter where you try to toggle them -->
+<!-- even from the empty lines around -->
+
+<!-- test toggling from every single line, it should work from any point -->
+<!-- and keep the indentation correct -->
+
+<!-- on top of this div -->
+<div>
+  <!-- try toggling with the cursor on the paragraph -->
+  <p></p>
+
+  <!-- another comment -->
+  <p>try toggling with the cursor on the line below the paragraph</p>
+
+  <!-- should toggle normaly when mixed with multiple kind comments -->
+  <p>one</p> <!-- even -->
+  <p>two</p> <!-- more -->
+  <p>three</p> <!-- comments -->
+
+  <!-- this should indent properly -->
+</div>
+
+<!-- also test for line comments on `./tests/test.lua` -->
+<!-- vim: set nofoldenable: -->
