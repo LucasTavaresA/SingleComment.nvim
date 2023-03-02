@@ -138,43 +138,60 @@ function M.Comment()
   local tmpindent
   local uncomment
 
-  -- check indentation and comment state of all lines for use later
-  for i, _ in ipairs(lines) do
-    if not lines[i]:match("^%s*$") then
-      -- gets the shallowest comment indentation for commenting
-      tmpindent = lines[i]:match("^%s*")
-      if indent:len() > tmpindent:len() then
-        indent = tmpindent
-      end
+  if #lines == 1 and (lines[1] == nil or lines[1] == "") then
+    --- comment when used in a single empty line
+    lines[1] = comment[1] .. comment[2]
 
-      -- uncomment only when all the lines are commented
-      if
-        uncomment == nil
-        and not lines[i]:match("^" .. indent .. vim.pesc(comment[1]))
-      then
-        uncomment = true
+    vim.api.nvim_buf_set_lines(bufnr, startRow - 1, endRow, false, lines)
+    vim.api.nvim_input("==")
+
+    -- position the cursor in insert mode
+    if comment[2] == "" then
+      vim.api.nvim_input("A ")
+    else
+      vim.api.nvim_input("A" .. string.rep("<left>", #comment[2]))
+    end
+  else
+    --- comment when used in multiple lines
+
+    -- check indentation and comment state of all lines for use later
+    for i, _ in ipairs(lines) do
+      if not lines[i]:match("^%s*$") then
+        -- gets the shallowest comment indentation for commenting
+        tmpindent = lines[i]:match("^%s*")
+        if indent:len() > tmpindent:len() then
+          indent = tmpindent
+        end
+
+        -- uncomment only when all the lines are commented
+        if
+          uncomment == nil
+          and not lines[i]:match("^" .. indent .. vim.pesc(comment[1]))
+        then
+          uncomment = true
+        end
       end
     end
-  end
 
-  -- comment or uncomment all lines
-  for i, _ in ipairs(lines) do
-    if not lines[i]:match("^%s*$") then
-      lines[i] = string.gsub(lines[i], "^" .. indent, "")
+    -- comment or uncomment all lines
+    for i, _ in ipairs(lines) do
+      if not lines[i]:match("^%s*$") then
+        lines[i] = string.gsub(lines[i], "^" .. indent, "")
 
-      if not uncomment then
-        lines[i] = lines[i]
-          :gsub("^" .. vim.pesc(comment[1]), indent)
-          :gsub(vim.pesc(comment[2]) .. "$", "")
-      else
-        lines[i] = indent .. comment[1] .. lines[i] .. comment[2]
+        if not uncomment then
+          lines[i] = lines[i]
+            :gsub("^" .. vim.pesc(comment[1]), indent)
+            :gsub(vim.pesc(comment[2]) .. "$", "")
+        else
+          lines[i] = indent .. comment[1] .. lines[i] .. comment[2]
+        end
       end
     end
-  end
 
-  vim.api.nvim_buf_set_lines(bufnr, startRow - 1, endRow, false, lines)
-  vim.api.nvim_input("<esc>")
-  vim.api.nvim_win_set_cursor(winnr, { startRow, col })
+    vim.api.nvim_buf_set_lines(bufnr, startRow - 1, endRow, false, lines)
+    vim.api.nvim_input("<esc>")
+    vim.api.nvim_win_set_cursor(winnr, { startRow, col })
+  end
 end
 
 return M
