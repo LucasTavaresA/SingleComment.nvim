@@ -90,19 +90,20 @@ end
 --- inserts a comment at the end of the current line
 function M.CommentAhead()
   local comment = GetComment()
-
   local line = vim.api.nvim_get_current_line()
-    .. " "
-    .. comment[1]
-    .. comment[2]
 
-  vim.api.nvim_set_current_line(line)
+  if line ~= "" then
+    line = line .. " "
+  end
+
+  vim.api.nvim_set_current_line(line .. comment[1] .. comment[2])
+  vim.api.nvim_input("==")
 
   -- position the cursor in insert mode
-  if comment[2] ~= "" then
-    vim.api.nvim_input("A" .. string.rep("<left>", #comment[2]))
-  else
+  if comment[2] == "" then
     vim.api.nvim_input("A ")
+  else
+    vim.api.nvim_input("A" .. string.rep("<left>", #comment[2]))
   end
 end
 
