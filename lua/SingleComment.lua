@@ -9,6 +9,7 @@ local blocks = {
 ---@type table filetypes that behave
 local exceptions = {
   json = { "// ", "" },
+  jsonc = { "// ", "" },
   css = { "/* ", " */" },
   nelua = { "-- ", "" },
 }
