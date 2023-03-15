@@ -21,8 +21,10 @@ local function GetComment()
   local filetype = vim.bo.ft
 
   -- get commentstring using ts_context_commentstring
-  if vim.g.SC_ts_context then
-    require("ts_context_commentstring.internal").update_commentstring({})
+  local ok, tsc = pcall(require, "ts_context_commentstring.internal")
+
+  if ok then
+    tsc.update_commentstring({})
   end
 
   local commentstring = vim.bo.commentstring

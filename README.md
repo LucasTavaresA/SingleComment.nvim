@@ -18,8 +18,7 @@ Super simple comment plugin that always uses single line comments
 
 2. Simplest plugin of them all **~150 loc** in a single file
 
-3. Compatible with [nvim-ts-context-commentstring](https://github.com/JoosepAlviste/nvim-ts-context-commentstring), turns its results into single line comments,
-   **See how to enable it below**
+3. Compatible with [nvim-ts-context-commentstring](https://github.com/JoosepAlviste/nvim-ts-context-commentstring), turns its results into single line comments
 
 4. Single line comments avoid unexpected results when commenting:
    - uncomments only when all the text selected is commented, avoiding confusion
@@ -36,9 +35,6 @@ Super simple comment plugin that always uses single line comments
 ```lua
 use {
   "lucastavaresa/SingleComment.nvim",
-  setup = function()
-    -- vim.g.SC_ts_context = true -- enable ts-context-commentstring
-  end
 }
 ```
 
@@ -47,9 +43,6 @@ use {
 ```lua
 {
   "lucastavaresa/SingleComment.nvim",
-  init = function()
-    -- vim.g.SC_ts_context = true -- enable ts-context-commentstring
-  end
 }
 ```
 
@@ -86,7 +79,6 @@ Those commands substitute all the above
       "JoosepAlviste/nvim-ts-context-commentstring"
     },
     setup = function()
-      vim.g.SC_ts_context = true -- enable ts-context-commentstring support
       vim.keymap.set(
         "n",
         "gcc",
@@ -111,7 +103,6 @@ Those commands substitute all the above
       "JoosepAlviste/nvim-ts-context-commentstring"
     },
     init = function()
-      vim.g.SC_ts_context = true -- enable ts-context-commentstring support
       vim.keymap.set("n", "gcc", require("SingleComment").SingleComment, { expr = true })
       vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
       vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
