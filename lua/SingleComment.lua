@@ -1,22 +1,32 @@
 ---@type table
 local M = {}
----@type table block comments that can be changed to line comments
-local blocks = {
-  ["/*"] = { "// ", "" },
-  ["/* "] = { "// ", "" },
-  ["<!--"] = { "<!-- ", " -->" },
-}
----@type table filetypes that behave
-local exceptions = {
-  json = { "// ", "" },
-  jsonc = { "// ", "" },
-  css = { "/* ", " */" },
-  nelua = { "-- ", "" },
+
+-- stylua: ignore
+---@type table kinds of comments
+local comments = {
+  ---@type table lines and filetypes that can be changed to block comments
+  block = {
+    ["-- "] = { "--[[ ", " ]]"},
+    default = { "/* ", " */" },
+  },
+  ---@type table blocks and filetypes that can be changed to line comments
+  -- some can't be changed ;-; but are here because of misbehaviour
+  line = {
+    ["/*"]   = { "// ", "" },
+    ["/* "]  = { "// ", "" },
+    ["<!--"] = { "<!-- ", " -->" },
+    json     = { "// ", "" },
+    jsonc    = { "// ", "" },
+    css      = { "/* ", " */" },
+    nelua    = { "-- ", "" },
+    default  = { "// ", "" },
+  },
 }
 
----@return table
---- returns a table with the comment beginning/end
-local function GetComment()
+---@param kind? string kind of returned comment, defaults to "line"
+---@return table table with the comment beginning/end
+local function GetComment(kind)
+  kind = kind or "line"
   local comment = {}
   local filetype = vim.bo.ft
 
@@ -29,18 +39,18 @@ local function GetComment()
 
   local commentstring = vim.bo.commentstring
 
-  if exceptions[filetype] ~= nil then
-    comment = exceptions[filetype]
+  if comments[kind][filetype] ~= nil then
+    comment = comments[kind][filetype]
   elseif commentstring == "" or commentstring == nil then
-    comment = { "/* ", " */" }
+    comment = comments[kind]["default"]
   else
     for pieces in string.gmatch(commentstring, "([^%%s]+)") do
       table.insert(comment, pieces)
     end
 
     -- try to turn block into single line comment
-    if blocks[comment[1]] then
-      comment = blocks[comment[1]]
+    if comments[kind][comment[1]] then
+      comment = comments[kind][comment[1]]
     end
 
     if comment[2] == nil then
