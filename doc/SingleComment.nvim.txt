@@ -40,7 +40,7 @@ FEATURES                      *SingleComment.nvim-singlecomment.nvim-features*
 
 3. Compatible with nvim-ts-context-commentstring
 <https://github.com/JoosepAlviste/nvim-ts-context-commentstring>, turns its
-results into single line comments, **See how to enable it below**
+results into single line comments
 
 4. Single line comments avoid unexpected results when commenting:
 
@@ -62,9 +62,6 @@ packer.nvim <https://github.com/wbthomason/packer.nvim>:
 >lua
     use {
       "lucastavaresa/SingleComment.nvim",
-      setup = function()
-        -- vim.g.SC_ts_context = true -- enable ts-context-commentstring
-      end
     }
 <
 
@@ -73,9 +70,6 @@ lazy.nvim <https://github.com/folke/lazy.nvim>:
 >lua
     {
       "lucastavaresa/SingleComment.nvim",
-      init = function()
-        -- vim.g.SC_ts_context = true -- enable ts-context-commentstring
-      end
     }
 <
 
@@ -115,7 +109,6 @@ Those commands substitute all the above
           "JoosepAlviste/nvim-ts-context-commentstring"
         },
         setup = function()
-          vim.g.SC_ts_context = true -- enable ts-context-commentstring support
           vim.keymap.set(
             "n",
             "gcc",
@@ -141,7 +134,6 @@ Those commands substitute all the above
           "JoosepAlviste/nvim-ts-context-commentstring"
         },
         init = function()
-          vim.g.SC_ts_context = true -- enable ts-context-commentstring support
           vim.keymap.set("n", "gcc", require("SingleComment").SingleComment, { expr = true })
           vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
           vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
