@@ -1,16 +1,15 @@
----@type table
 local M = {}
 
--- stylua: ignore
 ---@type table kinds of comments
+-- stylua: ignore
 local comments = {
   ---@type table lines and filetypes that can be changed to block comments
   block = {
-    ["-- "] = { "--[[ ", " ]]"},
+    ["-- "] = { "--[[ ", " ]]" },
     default = { "/* ", " */" },
   },
   ---@type table blocks and filetypes that can be changed to line comments
-  -- some can't be changed ;-; but are here because of misbehaviour
+  -- some can't be changed ;-; but are here for format adjustments
   line = {
     ["/*"]   = { "// ", "" },
     ["/* "]  = { "// ", "" },
@@ -40,15 +39,17 @@ local function GetComment(kind)
   local commentstring = vim.bo.commentstring
 
   if comments[kind][filetype] ~= nil then
+    -- use [filetype] override
     comment = comments[kind][filetype]
   elseif commentstring == "" or commentstring == nil then
+    -- use [default] comment for [kind]
     comment = comments[kind]["default"]
   else
-    for pieces in string.gmatch(commentstring, "([^%%s]+)") do
+    for pieces in commentstring:gmatch("([^%%s]+)") do
       table.insert(comment, pieces)
     end
 
-    -- try to turn block into single line comment
+    -- use a better [kind] of comment, or adjust its format
     if comments[kind][comment[1]] then
       comment = comments[kind][comment[1]]
     end
@@ -74,22 +75,25 @@ function M.ToggleCommentAhead()
   local feedlines = ""
 
   if
-    lines[b] ~= nil
+    lines[b]
     and lines[c]:find("^%s*" .. comment)
     and not (lines[b]:match(comment) or lines[b]:match("^%s*$"))
   then
+    -- move current line comment ahead of bottom line
     lines[c] = lines[b] .. " " .. lines[c]:match("^%s*(.*)")
     table.remove(lines, b)
   elseif lines[c]:find("%S+%s+" .. comment) then
+    -- move comment ahead of current line to a new line on top
     local text, comment_text = lines[c]:match("(.*) (" .. comment .. ".*)")
     table.insert(lines, c, comment_text)
     lines[c + 1] = text
     feedlines = "==zv"
   elseif
-    lines[t] ~= nil
+    lines[t]
     and lines[t]:find("^%s*" .. comment)
     and not (lines[c]:find(comment) or lines[c]:match("^%s*$"))
   then
+    -- move top line comment ahead of current line
     lines[c] = lines[c] .. " " .. lines[t]:match(comment .. ".*")
     table.remove(lines, t)
     c = c - 1
@@ -113,17 +117,13 @@ function M.CommentAhead()
   vim.api.nvim_feedkeys("==", "n", false)
 
   -- position the cursor in insert mode
-  if comment[2] == "" then
-    vim.api.nvim_feedkeys("A", "n", false)
-  else
-    local position = vim.api.nvim_replace_termcodes(
-      string.rep("<left>", #comment[2]),
-      true,
-      false,
-      true
-    )
-    vim.api.nvim_feedkeys("A" .. position, "n", false)
-  end
+  local position = vim.api.nvim_replace_termcodes(
+    string.rep("<left>", #comment[2]),
+    true,
+    false,
+    true
+  )
+  vim.api.nvim_feedkeys("A" .. position, "n", false)
 end
 
 -- handles dotrepeat when commenting which does not work with visual mode
@@ -140,83 +140,66 @@ function M.Comment()
   local comment = GetComment()
   local count = vim.v.count
   local col = vim.fn.col(".") - 1
-  local startRow, endRow = vim.fn.line("v"), vim.fn.line(".")
+  local sr, er = vim.fn.line("v"), vim.fn.line(".")
 
   -- in case the selection starts from the bottom
-  if startRow > endRow then
-    startRow, endRow = endRow, startRow
+  if sr > er then
+    sr, er = er, sr
   end
 
   -- account for counts
   if count ~= 0 then
-    endRow = endRow + count - 1
+    er = er + count - 1
   end
 
-  local lines = vim.api.nvim_buf_get_lines(bufnr, startRow - 1, endRow, false)
-  local indent = string.match(lines[1], "^%s*")
-  local tmpindent
-  local uncomment
+  local lines = vim.api.nvim_buf_get_lines(bufnr, sr - 1, er, false)
 
   if #lines == 1 and (lines[1] == nil or lines[1] == "") then
     --- comment when used in a single empty line
-    lines[1] = comment[1] .. comment[2]
-
-    vim.api.nvim_buf_set_lines(bufnr, startRow - 1, endRow, false, lines)
-    vim.api.nvim_feedkeys("==", "n", false)
-
-    -- position the cursor in insert mode
-    if comment[2] == "" then
-      vim.api.nvim_feedkeys("A", "n", false)
-    else
-      local position = vim.api.nvim_replace_termcodes(
-        string.rep("<left>", #comment[2]),
-        true,
-        false,
-        true
-      )
-      vim.api.nvim_feedkeys("A" .. position, "n", false)
-    end
-  else
-    --- comment when used in multiple lines
-
-    -- check indentation and comment state of all lines for use later
-    for i, _ in ipairs(lines) do
-      if not lines[i]:match("^%s*$") then
-        -- gets the shallowest comment indentation for commenting
-        tmpindent = lines[i]:match("^%s*")
-        if indent:len() > tmpindent:len() then
-          indent = tmpindent
-        end
-
-        -- uncomment only when all the lines are commented
-        if
-          uncomment == nil
-          and not lines[i]:match("^" .. indent .. vim.pesc(comment[1]))
-        then
-          uncomment = true
-        end
-      end
-    end
-
-    -- comment or uncomment all lines
-    for i, _ in ipairs(lines) do
-      if not lines[i]:match("^%s*$") then
-        lines[i] = string.gsub(lines[i], "^" .. indent, "")
-
-        if not uncomment then
-          lines[i] = lines[i]
-            :gsub("^" .. vim.pesc(comment[1]), indent)
-            :gsub(vim.pesc(comment[2]) .. "$", "")
-        else
-          lines[i] = indent .. comment[1] .. lines[i] .. comment[2]
-        end
-      end
-    end
-
-    vim.api.nvim_buf_set_lines(bufnr, startRow - 1, endRow, false, lines)
-    vim.api.nvim_input("<esc>")
-    vim.api.nvim_win_set_cursor(winnr, { startRow, col })
+    M.CommentAhead()
+    return
   end
+
+  --- comment when used in multiple lines
+  local indent = lines[1]:match("^%s*")
+  local tmpindent, uncomment
+
+  -- check indentation and comment state of all lines for use later
+  for i, _ in ipairs(lines) do
+    if not lines[i]:match("^%s*$") then
+      -- gets the shallowest comment indentation for commenting
+      tmpindent = lines[i]:match("^%s*")
+      if #indent > #tmpindent then
+        indent = tmpindent
+      end
+
+      -- uncomment only when all the lines are commented
+      if
+        uncomment == nil and not lines[i]:match("^%s*" .. vim.pesc(comment[1]))
+      then
+        uncomment = true
+      end
+    end
+  end
+
+  -- comment or uncomment all lines
+  for i, _ in ipairs(lines) do
+    if not lines[i]:match("^%s*$") then
+      lines[i] = lines[i]:gsub("^" .. indent, "")
+
+      if not uncomment then
+        lines[i] = lines[i]
+          :gsub("^" .. vim.pesc(comment[1]), indent)
+          :gsub(vim.pesc(comment[2]) .. "$", "")
+      else
+        lines[i] = indent .. comment[1] .. lines[i] .. comment[2]
+      end
+    end
+  end
+
+  vim.api.nvim_buf_set_lines(bufnr, sr - 1, er, false, lines)
+  vim.api.nvim_input("<esc>")
+  vim.api.nvim_win_set_cursor(winnr, { sr, col })
 end
 
 return M
