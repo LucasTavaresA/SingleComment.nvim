@@ -110,13 +110,19 @@ function M.CommentAhead()
   end
 
   vim.api.nvim_set_current_line(line .. comment[1] .. comment[2])
-  vim.api.nvim_input("==")
+  vim.api.nvim_feedkeys("==", "n", false)
 
   -- position the cursor in insert mode
   if comment[2] == "" then
-    vim.api.nvim_input("A ")
+    vim.api.nvim_feedkeys("A", "n", false)
   else
-    vim.api.nvim_input("A" .. string.rep("<left>", #comment[2]))
+    local position = vim.api.nvim_replace_termcodes(
+      string.rep("<left>", #comment[2]),
+      true,
+      false,
+      true
+    )
+    vim.api.nvim_feedkeys("A" .. position, "n", false)
   end
 end
 
@@ -156,13 +162,19 @@ function M.Comment()
     lines[1] = comment[1] .. comment[2]
 
     vim.api.nvim_buf_set_lines(bufnr, startRow - 1, endRow, false, lines)
-    vim.api.nvim_input("==")
+    vim.api.nvim_feedkeys("==", "n", false)
 
     -- position the cursor in insert mode
     if comment[2] == "" then
-      vim.api.nvim_input("A ")
+      vim.api.nvim_feedkeys("A", "n", false)
     else
-      vim.api.nvim_input("A" .. string.rep("<left>", #comment[2]))
+      local position = vim.api.nvim_replace_termcodes(
+        string.rep("<left>", #comment[2]),
+        true,
+        false,
+        true
+      )
+      vim.api.nvim_feedkeys("A" .. position, "n", false)
     end
   else
     --- comment when used in multiple lines
