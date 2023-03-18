@@ -1,6 +1,6 @@
 # SingleComment.nvim
 
-Super simple comment plugin that always uses single line comments
+Comment using only single line comments.
 
 ## Contents
 
@@ -13,20 +13,22 @@ Super simple comment plugin that always uses single line comments
 
 1. Supports
    - counts like 5{comment} and dotrepeat
-   - commenting in front of the current line
+   - commenting in front of the current line, and start a comment on empty lines
    - toggling a comment in front/top of the current line, [preview](#commentahead)
+   - block comments in case you really need them, and removing outermost block on cursor,
+ 	 [preview](#blockcomment)
 
-2. Simplest plugin of them all **~150 loc** in a single file
+2. Simplest of them all **~270 loc** in a single file
 
 3. Compatible with [nvim-ts-context-commentstring](https://github.com/JoosepAlviste/nvim-ts-context-commentstring), turns its results into single line comments
 
 4. Single line comments avoid unexpected results when commenting:
    - uncomments only when all the text selected is commented, avoiding confusion
      when getting big blocks of code out of the way for debugging
-   - always comments at the most shallow comment avoiding weird indentation
-     issues
+   - always comments at the most shallow comment to make maintaining different levels of
+     commented code easier
    - when you have block comments at the end of lines other plugins fail on
-     the simple task of getting this line out of the way, this plugin will **never** fail
+     the simple task of getting this line out of the way, this plugin should **never** fail
 
 ## Installation
 
@@ -48,7 +50,7 @@ use {
 
 ## Keybindings
 
-You need to set those to use SingleComment.nvim
+There is no keybindings by default.
 
 Those are all the available functions:
 
@@ -61,6 +63,8 @@ vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
 vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
 -- comments ahead of the current line
 vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
+-- comment a block, and removes the outermost block comment in normal mode
+vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
 ```
 
 ## Lazy load it
@@ -88,6 +92,7 @@ Those commands substitute all the above
       vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
       vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
       vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
+      vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
     end
   }
 ```
@@ -107,10 +112,15 @@ Those commands substitute all the above
       vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
       vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
       vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
+      vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
     end,
   },
 ```
 
 ## CommentAhead
 
-[![asciicast](https://asciinema.org/a/NAIVgm9maDJ5QN2gfrehAaVyA.svg)](https://asciinema.org/a/NAIVgm9maDJ5QN2gfrehAaVyA)
+[![asciicast](https://asciinema.org/a/jChjT4OZBaj7WsKWsAWiKsI3F.svg)](https://asciinema.org/a/jChjT4OZBaj7WsKWsAWiKsI3F)
+
+## BlockComment
+
+[![asciicast](https://asciinema.org/a/2VtZyh0Q3Nb5Eytwo0RSp5c2G.svg)](https://asciinema.org/a/2VtZyh0Q3Nb5Eytwo0RSp5c2G)

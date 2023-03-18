@@ -50,5 +50,15 @@ function abc()
   -- this should indent properly
 end
 
+--- Tests for Block comments
+-- Test everything in both normal and reverse selection, and test uncommenting
+-- Try visual line commenting
+-- Try commenting on the same line
+-- In multiline selections, Try commenting in a point before the starting position of the selection
+
+--     (.)  (.)    (.)
+-- (.)      (.)       (.)
+--     (.)      (.)
+
 --- also test for block comments on `./tests/test.html`
 -- vim: set nofoldenable:

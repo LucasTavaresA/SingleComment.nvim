@@ -202,4 +202,72 @@ function M.Comment()
   vim.api.nvim_win_set_cursor(winnr, { sr, col })
 end
 
+function M.BlockComment()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local mode = vim.fn.mode()
+  local comment = GetComment("block")
+  local _, sr, sc, _ = unpack(vim.fn.getpos("."))
+  local _, er, ec, _ = unpack(vim.fn.getpos("v"))
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+  if mode == "v" or mode == "V" then
+    -- keep start/end in the right place in reverse selection
+    if sr > er then
+      sr, er = er, sr
+      sc, ec = ec, sc
+    end
+
+    -- get all the line in visual line mode
+    if mode == "V" then
+      sc, ec = 1, 999
+    end
+
+    if sr == er then
+      -- cursor in the same line
+      -- in case of reversed column
+      if sc > ec then
+        sc, ec = ec, sc
+      end
+
+      lines[sr] = lines[sr]:sub(1, sc - 1)
+        .. " "
+        .. comment[1]
+        .. lines[sr]:sub(sc, ec):gsub("^%s+", "")
+        .. comment[2]
+        .. (#lines[sr]:sub(ec + 1) > 0 and " " .. lines[er]:sub(ec + 1) or "")
+    else
+      -- cursor in separate lines
+      lines[sr] = lines[sr]:sub(1, sc - 1)
+        .. " "
+        .. comment[1]
+        .. lines[sr]:sub(sc):gsub("^%s+", "")
+
+      lines[er] = lines[er]:sub(1, ec)
+        .. comment[2]
+        .. (#lines[er]:sub(ec + 1) > 0 and " " .. lines[er]:sub(ec + 1) or "")
+    end
+
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+    vim.api.nvim_feedkeys("=", "n", false)
+  else
+    -- uncomment outermost comment
+    comment = { vim.pesc(comment[1]), vim.pesc(comment[2]) }
+
+    for i = sr, 1, -1 do
+      if lines[i]:find(comment[1]) then
+        lines[i] = lines[i]:gsub("%s?" .. comment[1], "")
+
+        for j = sr, #lines do
+          if lines[j]:find(comment[2]) then
+            lines[j] = lines[j]:gsub(comment[2] .. "%s?", "")
+
+            vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+            return
+          end
+        end
+      end
+    end
+  end
+end
+
 return M
