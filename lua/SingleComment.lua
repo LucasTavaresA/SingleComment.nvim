@@ -255,7 +255,8 @@ function M.BlockComment()
 
     for i = sr, 1, -1 do
       if lines[i]:find(comment[1]) then
-        lines[i] = lines[i]:gsub("%s?" .. comment[1], "")
+        lines[i] = lines[i]:gsub("^(%s*)" .. comment[1], "%1")
+        lines[i] = lines[i]:gsub("%s" .. comment[1], "")
 
         for j = sr, #lines do
           if lines[j]:find(comment[2]) then
