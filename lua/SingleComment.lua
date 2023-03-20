@@ -4,9 +4,12 @@ local M = {}
 -- stylua: ignore
 local comments = {
   ---@type table lines and filetypes that can be changed to block comments
+  -- some can't be changed ;-; but are here for format adjustments
   block = {
-    ["-- "] = { "--[[ ", " ]]" },
-    default = { "/* ", " */" },
+    ["-- "]  = { "--[[ ", " ]]" },
+    ["<!--"] = { "<!-- ", " -->" },
+    ["/*"]   = { "/* ", " */" },
+    default  = { "/* ", " */" },
   },
   ---@type table blocks and filetypes that can be changed to line comments
   -- some can't be changed ;-; but are here for format adjustments
