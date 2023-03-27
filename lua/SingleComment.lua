@@ -6,22 +6,36 @@ local comments = {
   ---@type table lines and filetypes that can be changed to block comments
   -- some can't be changed ;-; but are here for format adjustments
   block = {
-    ["-- "]  = { "--[[ ", " ]]" },
     ["<!--"] = { "<!-- ", " -->" },
-    ["/*"]   = { "/* ", " */" },
-    default  = { "/* ", " */" },
+    ["-- "]  = { "--[[ ", " ]]" },
+    ["/*"]   = { "/* ",   " */" },
+    lisp     = { "#| ",   " |#" },
+    cmake    = { "#[[ ",  " ]]" },
+    haskell  = { "{- ",   " -}" },
+    elm      = { "{- ",   " -}" },
+    julia    = { "#= ",   " =#" },
+    luau     = { "--[[ ", " ]]" },
+    nim      = { "#[ ",   " ]#" },
+    ocaml    = { "(* ",   " *)" },
+    fsharp   = { "(* ",   " *)" },
+    default  = { "/* ",   " */" },
   },
   ---@type table blocks and filetypes that can be changed to line comments
   -- some can't be changed ;-; but are here for format adjustments
   line = {
-    ["/*"]   = { "// ", "" },
-    ["/* "]  = { "// ", "" },
     ["<!--"] = { "<!-- ", " -->" },
-    json     = { "// ", "" },
-    jsonc    = { "// ", "" },
-    css      = { "/* ", " */" },
-    nelua    = { "-- ", "" },
-    default  = { "// ", "" },
+    ["/*"]   = { "// ",   "" },
+    ["/* "]  = { "// ",   "" },
+    [";"]    = { ";; ",   "" },
+    ["%"]    = { "% ",    "" },
+    nim      = { "# ",    "" },
+    json     = { "// ",   "" },
+    jsonc    = { "// ",   "" },
+    nelua    = { "-- ",   "" },
+    luau     = { "-- ",   "" },
+    ocaml    = { "(* ",   " *)" },
+    css      = { "/* ",   " */" },
+    default  = { "// ",   "" },
   },
 }
 
@@ -48,9 +62,10 @@ local function GetComment(kind)
     -- use [default] comment for [kind]
     comment = comments[kind]["default"]
   else
-    for pieces in commentstring:gmatch("([^%%s]+)") do
-      table.insert(comment, pieces)
-    end
+    -- separating strings like `%%s` like tex comments
+    -- does not work well in a for loop with gmatch
+    comment[1] = commentstring:match("(.*)%%s")
+    comment[2] = commentstring:match("%%s(.*)")
 
     -- use a better [kind] of comment, or adjust its format
     if comments[kind][comment[1]] then
