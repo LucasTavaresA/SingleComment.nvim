@@ -57,6 +57,10 @@ local function GetComment(kind)
       comment = comments[kind][comment[1]]
     end
 
+    if comment[1] == nil then
+      comment[1] = ""
+    end
+
     if comment[2] == nil then
       comment[2] = ""
     end
