@@ -111,14 +111,6 @@ end
 function M.CommentAhead()
   local comment = GetComment()
   local line = vim.api.nvim_get_current_line()
-
-  if line ~= "" then
-    line = line .. " "
-  end
-
-  vim.api.nvim_set_current_line(line .. comment[1] .. comment[2])
-  vim.api.nvim_feedkeys("==", "n", false)
-
   -- position the cursor in insert mode
   local position = vim.api.nvim_replace_termcodes(
     string.rep("<left>", #comment[2]),
@@ -126,7 +118,22 @@ function M.CommentAhead()
     false,
     true
   )
-  vim.api.nvim_feedkeys("A" .. position, "n", false)
+
+  if line:match("^%s*$") then
+    -- comment on empty/only-space line
+    vim.api.nvim_feedkeys(
+      "S" .. comment[1] .. comment[2] .. position,
+      "n",
+      false
+    )
+  else
+    -- comment in ahead of the line
+    vim.api.nvim_feedkeys(
+      "A " .. comment[1] .. comment[2] .. position,
+      "n",
+      false
+    )
+  end
 end
 
 -- handles dotrepeat when commenting which does not work with visual mode
