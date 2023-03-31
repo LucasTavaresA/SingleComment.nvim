@@ -15,7 +15,7 @@ Comment using only single line comments.
    - counts like 5{comment} and dotrepeat
    - commenting in front of the current line, and start a comment on empty lines
    - toggling a comment in front/top of the current line, [preview](#commentahead)
-   - block comments in case you really need them, and removing outermost block on cursor,
+   - block comments in case you really need them, and removing innermost block on cursor,
  	 [preview](#blockcomment)
 
 2. Simplest of them all **~270 loc** in a single file
@@ -63,7 +63,7 @@ vim.keymap.set("v", "gcc", require("SingleComment").Comment, {})
 vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
 -- comments ahead of the current line
 vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
--- comment a block, and removes the outermost block comment in normal mode
+-- comment a block, and removes the innermost block comment in normal mode
 vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
 ```
 

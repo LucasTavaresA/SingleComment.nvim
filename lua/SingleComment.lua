@@ -279,7 +279,7 @@ function M.BlockComment()
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
     vim.api.nvim_feedkeys("=", "n", false)
   else
-    -- uncomment outermost comment
+    -- uncomment innermost comment
     comment = { vim.pesc(comment[1]), vim.pesc(comment[2]) }
 
     for i = sr, 1, -1 do
