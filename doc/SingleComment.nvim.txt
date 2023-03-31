@@ -36,7 +36,7 @@ FEATURES                      *SingleComment.nvim-singlecomment.nvim-features*
 - counts like 5{comment} and dotrepeat
 - commenting in front of the current line, and start a comment on empty lines
 - toggling a comment in front/top of the current line, |SingleComment.nvim-preview|
-- block comments in case you really need them, and removing outermost block on cursor,
+- block comments in case you really need them, and removing innermost block on cursor,
     |SingleComment.nvim-preview|
 
 2. Simplest of them all **~270 loc** in a single file
@@ -92,7 +92,7 @@ Those are all the available functions:
     vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
     -- comments ahead of the current line
     vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
-    -- comment a block, and removes the outermost block comment in normal mode
+    -- comment a block, and removes the innermost block comment in normal mode
     vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
 <
 
