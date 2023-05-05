@@ -1,6 +1,6 @@
 # SingleComment.nvim
 
-Comment using only single line comments.
+Always single line, comment sensitive, indentation preserving commenting.
 
 ## Contents
 
