@@ -2,6 +2,8 @@
 
 Always single line, comment sensitive, indentation preserving commenting.
 
+Turn on notifications in [Breaking Changes](https://github.com/LucasTavaresA/SingleComment.nvim/issues/3) if using this plugin.
+
 ## Contents
 
 - [Features](#features)
