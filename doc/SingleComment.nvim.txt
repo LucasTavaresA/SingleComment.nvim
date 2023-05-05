@@ -17,6 +17,10 @@ Table of Contents                       *SingleComment.nvim-table-of-contents*
 
 Always single line, comment sensitive, indentation preserving commenting.
 
+Turn on notifications in Breaking Changes
+<https://github.com/LucasTavaresA/SingleComment.nvim/issues/3> if using this
+plugin.
+
 
 CONTENTS                      *SingleComment.nvim-singlecomment.nvim-contents*
 
