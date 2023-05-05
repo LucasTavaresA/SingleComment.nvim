@@ -15,7 +15,7 @@ Table of Contents                       *SingleComment.nvim-table-of-contents*
 ==============================================================================
 1. SingleComment.nvim                  *SingleComment.nvim-singlecomment.nvim*
 
-Comment using only single line comments.
+Always single line, comment sensitive, indentation preserving commenting.
 
 
 CONTENTS                      *SingleComment.nvim-singlecomment.nvim-contents*
