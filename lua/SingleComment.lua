@@ -90,7 +90,7 @@ function M.ToggleCommentAhead()
   local bufnr = vim.api.nvim_get_current_buf()
   local winnr = vim.api.nvim_get_current_win()
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-  local comment = vim.pesc(GetComment()[1])
+  local comment = vim.pesc(M.GetComment()[1])
   local col = vim.fn.col(".") - 1
   local c = vim.fn.line(".")
   local t = c - 1
@@ -129,7 +129,7 @@ end
 
 --- inserts a comment at the end of the current line
 function M.CommentAhead()
-  local comment = GetComment()
+  local comment = M.GetComment()
   local line = vim.api.nvim_get_current_line()
   -- position the cursor in insert mode
   local position = vim.api.nvim_replace_termcodes(
@@ -167,7 +167,7 @@ end
 function M.Comment()
   local bufnr = vim.api.nvim_get_current_buf()
   local winnr = vim.api.nvim_get_current_win()
-  local comment = GetComment()
+  local comment = M.GetComment()
   local count = vim.v.count
   local col = vim.fn.col(".") - 1
   local sr, er = vim.fn.line("v"), vim.fn.line(".")
@@ -235,7 +235,7 @@ end
 function M.BlockComment()
   local bufnr = vim.api.nvim_get_current_buf()
   local mode = vim.fn.mode()
-  local comment = GetComment("block")
+  local comment = M.GetComment("block")
   local _, sr, sc, _ = unpack(vim.fn.getpos("."))
   local _, er, ec, _ = unpack(vim.fn.getpos("v"))
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
