@@ -8,6 +8,7 @@ Table of Contents                       *SingleComment.nvim-table-of-contents*
   - Features                  |SingleComment.nvim-singlecomment.nvim-features|
   - Installation          |SingleComment.nvim-singlecomment.nvim-installation|
   - Keybindings            |SingleComment.nvim-singlecomment.nvim-keybindings|
+  - Utilities                |SingleComment.nvim-singlecomment.nvim-utilities|
   - Lazy load it          |SingleComment.nvim-singlecomment.nvim-lazy-load-it|
   - CommentAhead          |SingleComment.nvim-singlecomment.nvim-commentahead|
   - BlockComment          |SingleComment.nvim-singlecomment.nvim-blockcomment|
@@ -24,7 +25,6 @@ plugin.
 
 CONTENTS                      *SingleComment.nvim-singlecomment.nvim-contents*
 
-
 - |SingleComment.nvim-features|
 - |SingleComment.nvim-installation|
 - |SingleComment.nvim-keybindings|
@@ -33,9 +33,7 @@ CONTENTS                      *SingleComment.nvim-singlecomment.nvim-contents*
 
 FEATURES                      *SingleComment.nvim-singlecomment.nvim-features*
 
-
 1. Supports
-
 
 - counts like 5{comment} and dotrepeat
 - commenting in front of the current line, and start a comment on empty lines
@@ -43,14 +41,16 @@ FEATURES                      *SingleComment.nvim-singlecomment.nvim-features*
 - block comments in case you really need them, and removing innermost block on cursor,
     |SingleComment.nvim-preview|
 
+
 2. Simplest of them all **~270 loc** in a single file
+
 
 3. Compatible with nvim-ts-context-commentstring
 <https://github.com/JoosepAlviste/nvim-ts-context-commentstring>, turns its
 results into single line comments
 
-4. Single line comments avoid unexpected results when commenting:
 
+4. Single line comments avoid unexpected results when commenting:
 
 - uncomments only when all the text selected is commented, avoiding confusion
     when getting big blocks of code out of the way for debugging
@@ -101,10 +101,24 @@ Those are all the available functions:
 <
 
 
+UTILITIES                    *SingleComment.nvim-singlecomment.nvim-utilities*
+
+Get a table with comment beginning and end
+
+Using this plugin custom tables and ts-context-commentstring it also updates
+the commentstring
+
+Useful for custom utility functions that need accurate comment detection
+
+>lua
+    -- you can pass "block", and it will *try* to get block comments
+    local comment = require("SingleComment").GetComment()
+<
+
+
 LAZY LOAD IT              *SingleComment.nvim-singlecomment.nvim-lazy-load-it*
 
 Those commands substitute all the above
-
 
 - with packer **i did not test this, please inform me if it works** :)
 
@@ -131,7 +145,6 @@ Those commands substitute all the above
         end
       }
 <
-
 
 - with lazy:
 
