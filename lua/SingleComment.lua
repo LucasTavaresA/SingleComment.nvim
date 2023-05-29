@@ -42,7 +42,7 @@ local comments = {
 
 ---@param kind? string kind of returned comment, defaults to "line"
 ---@return table table with the comment beginning/end
-local function GetComment(kind)
+function M.GetComment(kind)
   kind = kind or "line"
   local comment = {}
   local filetype = vim.bo.ft

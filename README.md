@@ -69,6 +69,19 @@ vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
 vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
 ```
 
+## Utilities
+
+Get a table with comment beginning and end
+
+Using this plugin custom tables and ts-context-commentstring it also updates the commentstring
+
+Useful for custom utility functions that need accurate comment detection
+
+```lua
+-- you can pass "block", and it will *try* to get block comments
+local comment = require("SingleComment").GetComment()
+```
+
 ## Lazy load it
 
 Those commands substitute all the above
