@@ -45,7 +45,8 @@ local comments = {
 function M.GetComment(kind)
   kind = kind or "line"
   local comment = {}
-  local filetype = vim.bo.ft
+  local bufnr = vim.api.nvim_get_current_buf()
+  local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
 
   -- get commentstring using ts_context_commentstring
   local ok, tsc = pcall(require, "ts_context_commentstring.internal")
@@ -54,7 +55,7 @@ function M.GetComment(kind)
     tsc.update_commentstring({})
   end
 
-  local commentstring = vim.bo.commentstring
+  local commentstring = vim.api.nvim_buf_get_option(bufnr, "commentstring")
 
   if comments[kind][filetype] ~= nil then
     -- use [filetype] override
@@ -234,13 +235,13 @@ end
 
 function M.BlockComment()
   local bufnr = vim.api.nvim_get_current_buf()
-  local mode = vim.fn.mode()
+  local mode = vim.api.nvim_get_mode()
   local comment = M.GetComment("block")
   local _, sr, sc, _ = unpack(vim.fn.getpos("."))
   local _, er, ec, _ = unpack(vim.fn.getpos("v"))
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
 
-  if mode == "v" or mode == "V" then
+  if mode == "v" or mode == "V" or mode == "CTRL-V" then
     -- keep start/end in the right place in reverse selection
     if sr > er then
       sr, er = er, sr
