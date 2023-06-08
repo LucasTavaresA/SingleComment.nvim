@@ -7,7 +7,9 @@ local comments = {
   -- some can't be changed ;-; but are here for format adjustments
   block = {
     ["<!--"]   = { "<!-- ", " -->" },
+    ["--[["]   = { "--[[ ", " ]]" },
     ["-- "]    = { "--[[ ", " ]]" },
+    ["--"]     = { "--[[ ", " ]]" },
     ["/*"]     = { "/* ",   " */" },
     lisp       = { "#| ",   " |#" },
     cmake      = { "#[[ ",  " ]]" },
@@ -20,6 +22,7 @@ local comments = {
     fsharp     = { "(* ",   " *)" },
     markdown   = { "<!-- ", " -->" },
     org        = { "# ",    "" },
+    neorg      = { "# ",    "" },
     javascript = { "/* ",   " */" },
     default    = { "/* ",   " */" },
   },
@@ -29,7 +32,7 @@ local comments = {
     ["<!--"] = { "<!-- ", " -->" },
     ["/*"]   = { "// ",   "" },
     ["/* "]  = { "// ",   "" },
-    [";"]    = { ";; ",   "" },
+    [";"]    = { "; ",   "" },
     ["%"]    = { "% ",    "" },
     ['#']    = { "# ",    "" },
     nim      = { "# ",    "" },
@@ -41,6 +44,7 @@ local comments = {
     css      = { "/* ",   " */" },
     markdown = { "<!-- ", " -->" },
     org      = { "# ",    "" },
+    neorg    = { "# ",    "" },
     default  = { "// ",   "" },
   },
 }
@@ -114,7 +118,7 @@ function M.GetComment(kind)
     cs = vim.api.nvim_buf_get_option(bufnr, "commentstring")
   else
     -- fix retarded TS comments without space
-    cs = cs:gsub("(//)(%%s)", "%1 %2")
+    cs = cs:gsub("(%S+)(%%s)", "%1 %2")
   end
 
   if comments[kind][filetype] ~= nil then
