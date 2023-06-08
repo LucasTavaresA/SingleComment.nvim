@@ -13,18 +13,22 @@ Turn on notifications in [Breaking Changes](https://github.com/LucasTavaresA/Sin
 
 ## Features
 
-1. Supports
+1. Simple and stupid, just complain and i will change some lua tables around and we are ready to work
+
+2. Supports
    - counts like 5{comment} and dotrepeat
    - commenting in front of the current line, and start a comment on empty lines
    - toggling a comment in front/top of the current line, [preview](#commentahead)
    - block comments in case you really need them, and removing innermost block on cursor,
  	 [preview](#blockcomment)
 
-2. Simplest of them all **~270 loc** in a single file
+3. Simplest of them all **~270 loc** in a single file
 
-3. Compatible with [nvim-ts-context-commentstring](https://github.com/JoosepAlviste/nvim-ts-context-commentstring), turns its results into single line comments
+4. In neovim < 0.9 it uses [nvim-ts-context-commentstring](https://github.com/JoosepAlviste/nvim-ts-context-commentstring) automatically if available
+   or just treesitter on neovim latest thanks to @echasnovski for the boilerplate,
+   them tries to turn all results into line comments
 
-4. Single line comments avoid unexpected results when commenting:
+5. Single line comments avoid unexpected results when commenting:
    - uncomments only when all the text selected is commented, avoiding confusion
      when getting big blocks of code out of the way for debugging
    - always comments at the most shallow comment to make maintaining different levels of
@@ -71,9 +75,14 @@ vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
 
 ## Utilities
 
+### GetComment()
+
 Get a table with comment beginning and end
 
-Using this plugin custom tables and ts-context-commentstring it also updates the commentstring
+Improved by treesitter and ts-context-commentstring but also works without
+those automatically, them gets single-lined/tweaked by this plugin custom tables
+
+Also updates the commentstring
 
 Useful for custom utility functions that need accurate comment detection
 
@@ -139,3 +148,11 @@ Those commands substitute all the above
 ## BlockComment
 
 [![asciicast](https://asciinema.org/a/2VtZyh0Q3Nb5Eytwo0RSp5c2G.svg)](https://asciinema.org/a/2VtZyh0Q3Nb5Eytwo0RSp5c2G)
+
+## Other Comment plugins
+
+- [echasnovski/mini.comment](https://github.com/echasnovski/mini.comment)
+- [numToStr/Comment.nvim](https://github.com/numToStr/Comment.nvim)
+- [preservim/nerdcommenter](https://github.com/preservim/nerdcommenter)
+- [tpope/vim-commentary](https://github.com/tpope/vim-commentary)
+- [b3nj5m1n/kommentary](https://github.com/b3nj5m1n/kommentary)

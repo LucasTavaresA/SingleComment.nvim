@@ -40,6 +40,55 @@ local comments = {
   },
 }
 
+---- STOLEN FROM MINI.COMMENT
+--- tries to get a commentstring using treesitter
+---@return string|nil annoying string with %s that makes peoples lives more difficult
+--- or nil if you are on debian
+local function TSCommentString()
+  -- Neovim<0.9 can only have buffer 'commentstring'
+  if vim.fn.has("nvim-0.9") == 0 then
+    return nil
+  end
+
+  local has_ts_parser, ts_parser = pcall(vim.treesitter.get_parser)
+
+  if not has_ts_parser then
+    return nil
+  end
+
+  local col = vim.fn.col(".") - 1
+  local row = vim.fn.line("v")
+  local ref_range = { row, col, row, col + 1 }
+  local ts_cs, res_level = nil, 0
+  local traverse
+
+  traverse = function(lang_tree, level)
+    if not lang_tree:contains(ref_range) then
+      return
+    end
+
+    local lang = lang_tree:lang()
+    local filetypes = vim.treesitter.language.get_filetypes(lang)
+
+    for _, ft in ipairs(filetypes) do
+      -- Using `vim.filetype.get_option()` for performance as it has caching
+      local cur_cs = vim.filetype.get_option(ft, "commentstring")
+
+      if type(cur_cs) == "string" and cur_cs ~= "" and level > res_level then
+        ts_cs = cur_cs
+      end
+
+      for _, child_lang_tree in pairs(lang_tree:children()) do
+        traverse(child_lang_tree, level + 1)
+      end
+    end
+  end
+
+  traverse(ts_parser, 1)
+
+  return ts_cs
+end
+
 ---@param kind? string kind of returned comment, defaults to "line"
 ---@return table table with the comment beginning/end
 function M.GetComment(kind)
@@ -47,27 +96,30 @@ function M.GetComment(kind)
   local comment = {}
   local bufnr = vim.api.nvim_get_current_buf()
   local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+  local cs = TSCommentString()
 
-  -- get commentstring using ts_context_commentstring
-  local ok, tsc = pcall(require, "ts_context_commentstring.internal")
+  if cs == "" or cs == nil then
+    -- set commentstring using ts_context_commentstring if treesitter failed
+    local ok, tsc = pcall(require, "ts_context_commentstring.internal")
 
-  if ok then
-    tsc.update_commentstring({})
+    if ok then
+      tsc.update_commentstring({})
+    end
+
+    cs = vim.api.nvim_buf_get_option(bufnr, "commentstring")
   end
-
-  local commentstring = vim.api.nvim_buf_get_option(bufnr, "commentstring")
 
   if comments[kind][filetype] ~= nil then
     -- use [filetype] override
     comment = comments[kind][filetype]
-  elseif commentstring == "" or commentstring == nil then
+  elseif cs == "" or cs == nil then
     -- use [default] comment for [kind]
     comment = comments[kind]["default"]
   else
     -- separating strings like `%%s` like tex comments
     -- does not work well in a for loop with gmatch
-    comment[1] = commentstring:match("(.*)%%s")
-    comment[2] = commentstring:match("%%s(.*)")
+    comment[1] = cs:match("(.*)%%s")
+    comment[2] = cs:match("%%s(.*)")
 
     -- use a better [kind] of comment, or adjust its format
     if comments[kind][comment[1]] then
