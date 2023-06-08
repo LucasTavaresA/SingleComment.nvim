@@ -6,19 +6,22 @@ local comments = {
   ---@type table lines and filetypes that can be changed to block comments
   -- some can't be changed ;-; but are here for format adjustments
   block = {
-    ["<!--"] = { "<!-- ", " -->" },
-    ["-- "]  = { "--[[ ", " ]]" },
-    ["/*"]   = { "/* ",   " */" },
-    lisp     = { "#| ",   " |#" },
-    cmake    = { "#[[ ",  " ]]" },
-    haskell  = { "{- ",   " -}" },
-    elm      = { "{- ",   " -}" },
-    julia    = { "#= ",   " =#" },
-    luau     = { "--[[ ", " ]]" },
-    nim      = { "#[ ",   " ]#" },
-    ocaml    = { "(* ",   " *)" },
-    fsharp   = { "(* ",   " *)" },
-    default  = { "/* ",   " */" },
+    ["<!--"]   = { "<!-- ", " -->" },
+    ["-- "]    = { "--[[ ", " ]]" },
+    ["/*"]     = { "/* ",   " */" },
+    lisp       = { "#| ",   " |#" },
+    cmake      = { "#[[ ",  " ]]" },
+    haskell    = { "{- ",   " -}" },
+    elm        = { "{- ",   " -}" },
+    julia      = { "#= ",   " =#" },
+    luau       = { "--[[ ", " ]]" },
+    nim        = { "#[ ",   " ]#" },
+    ocaml      = { "(* ",   " *)" },
+    fsharp     = { "(* ",   " *)" },
+    markdown   = { "<!-- ", " -->" },
+    org        = { "# ",    "" },
+    javascript = { "/* ",   " */" },
+    default    = { "/* ",   " */" },
   },
   ---@type table blocks and filetypes that can be changed to line comments
   -- some can't be changed ;-; but are here for format adjustments
@@ -36,6 +39,8 @@ local comments = {
     luau     = { "-- ",   "" },
     ocaml    = { "(* ",   " *)" },
     css      = { "/* ",   " */" },
+    markdown = { "<!-- ", " -->" },
+    org      = { "# ",    "" },
     default  = { "// ",   "" },
   },
 }
@@ -107,6 +112,9 @@ function M.GetComment(kind)
     end
 
     cs = vim.api.nvim_buf_get_option(bufnr, "commentstring")
+  else
+    -- fix retarded TS comments without space
+    cs = cs:gsub("(//)(%%s)", "%1 %2")
   end
 
   if comments[kind][filetype] ~= nil then
