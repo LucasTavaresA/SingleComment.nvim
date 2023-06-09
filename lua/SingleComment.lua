@@ -243,7 +243,7 @@ end
 
 function M.BlockComment()
   local bufnr = vim.api.nvim_get_current_buf()
-  local mode = vim.api.nvim_get_mode()
+  local mode = vim.api.nvim_get_mode()["mode"]
   local comment = M.GetComment("block")
   local _, sr, sc, _ = unpack(vim.fn.getpos("."))
   local _, er, ec, _ = unpack(vim.fn.getpos("v"))
