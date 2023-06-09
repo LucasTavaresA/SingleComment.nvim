@@ -24,9 +24,7 @@ Turn on notifications in [Breaking Changes](https://github.com/LucasTavaresA/Sin
 
 3. Simplest of them all **~270 loc** in a single file
 
-4. In neovim < 0.9 it uses [nvim-ts-context-commentstring](https://github.com/JoosepAlviste/nvim-ts-context-commentstring) automatically if available
-   or just treesitter on neovim latest thanks to @echasnovski for the boilerplate,
-   them tries to turn all results into line comments
+4. It uses [nvim-ts-context-commentstring](https://github.com/JoosepAlviste/nvim-ts-context-commentstring) automatically if available them tries to turn all results into line comments
 
 5. Single line comments avoid unexpected results when commenting:
    - uncomments only when all the text selected is commented, avoiding confusion
@@ -79,8 +77,8 @@ vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
 
 Get a table with comment beginning and end
 
-Improved by treesitter and ts-context-commentstring but also works without
-those automatically, them gets single-lined/tweaked by this plugin custom tables
+Improved by ts-context-commentstring but also works without it automatically,
+them gets single-lined/tweaked by this plugin custom tables
 
 Also updates the commentstring
 
