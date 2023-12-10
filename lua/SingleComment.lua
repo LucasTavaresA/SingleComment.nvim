@@ -109,7 +109,7 @@ function M.ToggleCommentAhead()
   local c = vim.fn.line(".")
   local t = c - 1
   local b = c + 1
-  local feedlines = ""
+  local after_cmd = ""
 
   if
     lines[b]
@@ -124,7 +124,7 @@ function M.ToggleCommentAhead()
     local text, comment_text = lines[c]:match("(.*) (" .. comment .. ".*)")
     table.insert(lines, c, comment_text)
     lines[c + 1] = text
-    feedlines = "==zv"
+    after_cmd = "==zv"
   elseif
     lines[t]
     and lines[t]:find("^%s*" .. comment)
@@ -138,7 +138,7 @@ function M.ToggleCommentAhead()
 
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   vim.api.nvim_win_set_cursor(winnr, { c, col })
-  vim.api.nvim_feedkeys(feedlines, "n", false)
+  vim.api.nvim_feedkeys(after_cmd, "n", false)
 end
 
 --- inserts a comment at the end of the current line
