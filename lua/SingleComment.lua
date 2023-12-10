@@ -24,6 +24,7 @@ local comments = {
     org             = { "# ",    "" },
     neorg           = { "# ",    "" },
     javascript      = { "/* ",   " */" },
+    c               = { "/* ",   " */" },
     editorconfig    = { "# ",   "" },
     fortran         = { "! ",   "" },
     default         = { "/* ",   " */" },
