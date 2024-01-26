@@ -231,12 +231,12 @@ function M.Comment()
     if not lines[i]:match("^%s*$") then
       lines[i] = lines[i]:gsub("^" .. indent, "")
 
-      if not uncomment then
+      if uncomment then
+        lines[i] = indent .. comment[1] .. lines[i] .. comment[2]
+      else
         lines[i] = lines[i]
           :gsub("^" .. vim.pesc(comment[1]), indent)
           :gsub(vim.pesc(comment[2]) .. "$", "")
-      else
-        lines[i] = indent .. comment[1] .. lines[i] .. comment[2]
       end
     end
   end
