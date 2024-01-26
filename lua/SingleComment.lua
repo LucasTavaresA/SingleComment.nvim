@@ -254,7 +254,7 @@ function M.BlockComment()
   local _, er, ec, _ = unpack(vim.fn.getpos("v"))
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
 
-  if mode == "v" or mode == "V" or mode == "CTRL-V" then
+  if mode == "v" or mode == "V" or mode == "\x16" then
     -- keep start/end in the right place in reverse selection
     if sr > er then
       sr, er = er, sr
