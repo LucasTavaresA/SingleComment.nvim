@@ -23,6 +23,11 @@ function b()
   -- local d = nil
 end
 
+-- should be able to comment on the middle of lines in visual block mode CTRL-V
+-- try visual block commenting only the nils
+local e = nil
+local f = nil
+
 --- Tests for toggling comments ahead/top
 
 -- should do nothing to this line

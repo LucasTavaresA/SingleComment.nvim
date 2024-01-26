@@ -183,12 +183,16 @@ function M.Comment()
   local winnr = vim.api.nvim_get_current_win()
   local comment = M.GetComment()
   local count = vim.v.count
-  local col = vim.fn.col(".") - 1
-  local sr, er = vim.fn.line("v"), vim.fn.line(".")
+  local _, sr, sc, _ = unpack(vim.fn.getpos("."))
+  local _, er, ec, _ = unpack(vim.fn.getpos("v"))
+  local mode = vim.api.nvim_get_mode()["mode"]
 
-  -- in case the selection starts from the bottom
+  -- in case the selection is reversed
   if sr > er then
     sr, er = er, sr
+  end
+  if sc > ec then
+    sc, ec = ec, sc
   end
 
   -- account for counts
@@ -228,7 +232,14 @@ function M.Comment()
 
   -- comment or uncomment all lines
   for i, _ in ipairs(lines) do
-    if not lines[i]:match("^%s*$") then
+    if mode == "\x16" then
+      lines[i] =
+          lines[i]:sub(1, sc - 1)
+          .. comment[1]
+          .. lines[i]:sub(sc, ec)
+          .. comment[2]
+          .. lines[i]:sub(ec + 1)
+    elseif not lines[i]:match("^%s*$") then
       lines[i] = lines[i]:gsub("^" .. indent, "")
 
       if uncomment then
@@ -243,7 +254,7 @@ function M.Comment()
 
   vim.api.nvim_buf_set_lines(bufnr, sr - 1, er, false, lines)
   vim.api.nvim_input("<esc>")
-  vim.api.nvim_win_set_cursor(winnr, { sr, col })
+  vim.api.nvim_win_set_cursor(winnr, { sr, sc - 1 })
 end
 
 function M.BlockComment()
