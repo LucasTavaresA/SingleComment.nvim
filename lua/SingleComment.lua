@@ -236,9 +236,8 @@ function M.Comment()
       lines[i] =
           lines[i]:sub(1, sc - 1)
           .. comment[1]
-          .. lines[i]:sub(sc, ec)
+          .. lines[i]:sub(sc)
           .. comment[2]
-          .. lines[i]:sub(ec + 1)
     elseif not lines[i]:match("^%s*$") then
       lines[i] = lines[i]:gsub("^" .. indent, "")
 
@@ -292,14 +291,32 @@ function M.BlockComment()
         .. (#lines[sr]:sub(ec + 1) > 0 and " " .. lines[er]:sub(ec + 1) or "")
     else
       -- cursor in separate lines
-      lines[sr] = lines[sr]:sub(1, sc - 1)
-        .. " "
-        .. comment[1]
-        .. lines[sr]:sub(sc):gsub("^%s+", "")
+      if mode == "\x16" then
+        -- in case of reversed column
+        if sc > ec then
+          sc, ec = ec, sc
+        end
 
-      lines[er] = lines[er]:sub(1, ec)
-        .. comment[2]
-        .. (#lines[er]:sub(ec + 1) > 0 and " " .. lines[er]:sub(ec + 1) or "")
+        -- in visual block mode
+        for i=sr,er do
+          lines[i] =
+              lines[i]:sub(1, sc - 1)
+              .. comment[1]
+              .. lines[i]:sub(sc, ec)
+              .. comment[2]
+              .. lines[i]:sub(ec + 1)
+        end
+      else
+        -- in visual mode
+        lines[sr] = lines[sr]:sub(1, sc - 1)
+          .. " "
+          .. comment[1]
+          .. lines[sr]:sub(sc):gsub("^%s+", "")
+
+        lines[er] = lines[er]:sub(1, ec)
+          .. comment[2]
+          .. (#lines[er]:sub(ec + 1) > 0 and " " .. lines[er]:sub(ec + 1) or "")
+      end
     end
 
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)

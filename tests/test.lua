@@ -24,9 +24,12 @@ function b()
 end
 
 -- should be able to comment on the middle of lines in visual block mode CTRL-V
--- try visual block commenting only the nils
-local e = nil
-local f = nil
+-- block commenting comments the selected block
+-- line commenting comments the selected column to end of the line
+-- it does not do anything inteligently, no uncommenting/commenting toggle
+-- it does not know the language syntax either
+local e = "some paragraph of text"
+local f = "some paragraph of text"
 
 --- Tests for toggling comments ahead/top
 
