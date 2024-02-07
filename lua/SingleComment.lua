@@ -121,7 +121,7 @@ function M.ToggleCommentAhead()
     table.remove(lines, b)
   elseif lines[c]:find("%S+%s+" .. comment) then
     -- move comment ahead of current line to a new line on top
-    local text, comment_text = lines[c]:match("(.*) (" .. comment .. ".*)")
+    local text, comment_text = lines[c]:match("(.-)%s(" .. comment .. ".*)")
     table.insert(lines, c, comment_text)
     lines[c + 1] = text
     after_cmd = "==zv"
