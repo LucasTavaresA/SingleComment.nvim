@@ -13,6 +13,7 @@ Table of Contents                       *SingleComment.nvim-table-of-contents*
   - CommentAhead          |SingleComment.nvim-singlecomment.nvim-commentahead|
   - BlockComment          |SingleComment.nvim-singlecomment.nvim-blockcomment|
   - Other Comment plugins|SingleComment.nvim-singlecomment.nvim-other-comment-plugins|
+2. Links                                            |SingleComment.nvim-links|
 
 ==============================================================================
 1. SingleComment.nvim                  *SingleComment.nvim-singlecomment.nvim*
