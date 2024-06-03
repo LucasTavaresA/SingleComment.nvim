@@ -59,8 +59,8 @@ local comments = {
 function M.GetComment(kind)
   kind = kind or "line"
   local comment = {}
-  local bufnr = vim.api.nvim_get_current_buf()
-  local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+  local buf = vim.api.nvim_get_current_buf()
+  local filetype = vim.api.nvim_get_option_value("filetype", { buf = buf })
 
   local ok, tsc = pcall(require, "ts_context_commentstring.internal")
 
@@ -68,7 +68,7 @@ function M.GetComment(kind)
     tsc.update_commentstring({})
   end
 
-  local cs = vim.api.nvim_buf_get_option(bufnr, "commentstring")
+  local cs = vim.api.nvim_get_option_value("commentstring", { buf = buf })
 
   if comments[kind][filetype] ~= nil then
     -- use [filetype] override
