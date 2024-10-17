@@ -8,28 +8,31 @@ local comments = require("SingleComment.Comments")
 function M.GetComment(kind)
 	kind = kind or "line"
 	local comment = {}
+	local commentstring = nil
 	local buf = vim.api.nvim_get_current_buf()
 	local filetype = vim.api.nvim_get_option_value("filetype", { buf = buf })
 
 	local ok, tsc = pcall(require, "ts_context_commentstring.internal")
 
 	if ok then
-		tsc.update_commentstring({})
+		commentstring = tsc.calculate_commentstring()
 	end
 
-	local cs = vim.api.nvim_get_option_value("commentstring", { buf = buf })
+	if commentstring == nil then
+		commentstring = vim.api.nvim_get_option_value("commentstring", { buf = buf })
+	end
 
 	if comments[kind][filetype] ~= nil then
 		-- use [filetype] override
 		comment = comments[kind][filetype]
-	elseif cs == "" or cs == nil then
+	elseif commentstring == "" or commentstring == nil then
 		-- use [default] comment for [kind]
 		comment = comments[kind]["default"]
 	else
 		-- separating strings like `%%s` like tex comments
 		-- does not work well in a for loop with gmatch
-		comment[1] = cs:match("(.*)%%s")
-		comment[2] = cs:match("%%s(.*)")
+		comment[1] = commentstring:match("(.*)%%s")
+		comment[2] = commentstring:match("%%s(.*)")
 
 		-- use a better [kind] of comment, or adjust its format
 		if comments[kind][comment[1]] then

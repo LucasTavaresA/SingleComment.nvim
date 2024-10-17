@@ -80,8 +80,6 @@ Get a table with comment beginning and end
 Improved by ts-context-commentstring but also works without it automatically,
 them gets single-lined/tweaked by this plugin custom tables
 
-Also updates the commentstring
-
 Useful for custom utility functions that need accurate comment detection
 
 ```lua
