@@ -19,6 +19,7 @@ Turn on notifications in [Breaking Changes](https://github.com/LucasTavaresA/Sin
    - counts like 5{comment} and dotrepeat
    - commenting in front of the current line, and start a comment on empty lines
    - toggling a comment in front/top of the current line, [preview](#commentahead)
+   - pasting as a comment, accounting for indentation
    - block comments in case you really need them, and removing innermost block on cursor,
  	 [preview](#blockcomment)
 
@@ -69,6 +70,8 @@ vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
 vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
 -- comment a block, and removes the innermost block comment in normal mode
 vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
+-- pastes as a comment, accounting for indentation
+vim.keymap.set({ "n", "v" }, "gcp", require("SingleComment").CommentPaste)
 ```
 
 ## Utilities
@@ -97,7 +100,10 @@ Those commands substitute all the above
   use {
     "lucastavaresa/SingleComment.nvim",
     opt = true,
-    keybindings = { { { "n", "v" }, "gcc" }, { "n", "gca" } },
+    keybindings = {
+      { { "n", "v" }, "gcc" }, { "n", "gca" }, { "n", "gcA" },
+      { { "n", "v" }, "gcb" }, { { "n", "v" }, "gcp" }
+    },
     requires = {
       "nvim-treesitter/nvim-treesitter",
       "JoosepAlviste/nvim-ts-context-commentstring"
@@ -113,6 +119,7 @@ Those commands substitute all the above
       vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
       vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
       vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
+      vim.keymap.set({ "n", "v" }, "gcp", require("SingleComment").CommentPaste)
     end
   }
 ```
@@ -133,6 +140,7 @@ Those commands substitute all the above
       vim.keymap.set("n", "gca", require("SingleComment").ToggleCommentAhead, {})
       vim.keymap.set("n", "gcA", require("SingleComment").CommentAhead, {})
       vim.keymap.set({ "n", "v" }, "gcb", require("SingleComment").BlockComment)
+      vim.keymap.set({ "n", "v" }, "gcp", require("SingleComment").CommentPaste)
     end,
   },
 ```

@@ -68,5 +68,12 @@ end
 -- (.)      (.)       (.)
 --     (.)      (.)
 
+--- Tests for commented pasting
+for i=0,10 do
+  print(i)
+  -- ^ copy and paste this line, it should match this comment
+  -- print(i)
+end
+
 --- also test for block comments on `./tests/test.html`
 -- vim: set nofoldenable:

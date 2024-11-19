@@ -293,4 +293,33 @@ function M.BlockComment()
 	end
 end
 
+function M.CommentPaste()
+	local comment = M.GetComment()
+	local lines = vim.split(vim.fn.getreg("+"):gsub("\r\n", "\n"), "\n")
+	lines[#lines] = nil
+
+	local indent = lines[1]:match("^%s*")
+	local tmpindent
+
+	-- check indentation and comment state of all lines for use later
+	for i, _ in ipairs(lines) do
+		if not lines[i]:match("^%s*$") then
+			-- gets the shallowest comment indentation for commenting
+			tmpindent = lines[i]:match("^%s*")
+			if #indent > #tmpindent then
+				indent = tmpindent
+			end
+		end
+	end
+
+	for i, _ in ipairs(lines) do
+		if not lines[i]:match("^%s*$") then
+			lines[i] = indent .. comment[1] .. lines[i]:gsub("^" .. indent, "") .. comment[2]
+		end
+	end
+
+	vim.fn.append(vim.fn.line("."), lines)
+	vim.api.nvim_input((#lines + 1) .. "==jw")
+end
+
 return M
