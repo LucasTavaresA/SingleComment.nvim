@@ -86,7 +86,7 @@ them gets single-lined/tweaked by this plugin custom tables
 Useful for custom utility functions that need accurate comment detection
 
 ```lua
--- you can pass "block", and it will *try* to get block comments
+-- you can pass "block", and it will **try** to get block comments
 local comment = require("SingleComment").GetComment()
 ```
 
