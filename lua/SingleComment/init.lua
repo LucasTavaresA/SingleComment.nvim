@@ -1,5 +1,5 @@
 local function trim(s)
-  return s:match"^%s*(.*)":match"(.-)%s*$"
+	return s:match("^%s*(.*)"):match("(.-)%s*$")
 end
 
 local M = {}
@@ -23,7 +23,8 @@ function M.GetComment(kind)
 	end
 
 	if commentstring == nil then
-		commentstring = vim.api.nvim_get_option_value("commentstring", { buf = buf })
+		commentstring =
+			vim.api.nvim_get_option_value("commentstring", { buf = buf })
 	end
 
 	if comments[kind][filetype] ~= nil then
@@ -68,9 +69,9 @@ function M.ToggleCommentAhead()
 	local after_cmd = ""
 
 	if
-			lines[b]
-			and lines[c]:find("^%s*" .. comment)
-			and not (lines[b]:match(comment) or lines[b]:match("^%s*$"))
+		lines[b]
+		and lines[c]:find("^%s*" .. comment)
+		and not (lines[b]:match(comment) or lines[b]:match("^%s*$"))
 	then
 		-- move current line comment ahead of bottom line
 		lines[c] = lines[b] .. " " .. lines[c]:match("^%s*(.*)")
@@ -82,9 +83,9 @@ function M.ToggleCommentAhead()
 		lines[c + 1] = text
 		after_cmd = "==zv"
 	elseif
-			lines[t]
-			and lines[t]:find("^%s*" .. comment)
-			and not (lines[c]:find(comment) or lines[c]:match("^%s*$"))
+		lines[t]
+		and lines[t]:find("^%s*" .. comment)
+		and not (lines[c]:find(comment) or lines[c]:match("^%s*$"))
 	then
 		-- move top line comment ahead of current line
 		lines[c] = lines[c] .. " " .. lines[t]:match(comment .. ".*")
@@ -179,7 +180,8 @@ function M.Comment()
 
 			-- comment if theres any uncommented lines
 			if
-					comment == nil and not lines[i]:match("^%s*" .. vim.pesc(trim(comments[1])))
+				comment == nil
+				and not lines[i]:match("^%s*" .. vim.pesc(trim(comments[1])))
 			then
 				comment = true
 			end
@@ -190,9 +192,9 @@ function M.Comment()
 	for i, _ in ipairs(lines) do
 		if mode == "\x16" then
 			lines[i] = lines[i]:sub(1, sc - 1)
-					.. comments[1]
-					.. lines[i]:sub(sc)
-					.. comments[2]
+				.. comments[1]
+				.. lines[i]:sub(sc)
+				.. comments[2]
 		elseif not lines[i]:match("^%s*$") then
 			lines[i] = lines[i]:gsub("^" .. indent, "")
 
@@ -204,8 +206,8 @@ function M.Comment()
 					lines[i] = ""
 				else
 					lines[i] = lines[i]
-							:gsub("^" .. vim.pesc(comments[1]), indent)
-							:gsub(vim.pesc(comments[2]) .. "$", "")
+						:gsub("^" .. vim.pesc(comments[1]), indent)
+						:gsub(vim.pesc(comments[2]) .. "$", "")
 				end
 			end
 		end
@@ -244,11 +246,11 @@ function M.BlockComment()
 			end
 
 			lines[sr] = lines[sr]:sub(1, sc - 1)
-					.. " "
-					.. comment[1]
-					.. lines[sr]:sub(sc, ec):gsub("^%s+", "")
-					.. comment[2]
-					.. (#lines[sr]:sub(ec + 1) > 0 and " " .. lines[er]:sub(ec + 1) or "")
+				.. " "
+				.. comment[1]
+				.. lines[sr]:sub(sc, ec):gsub("^%s+", "")
+				.. comment[2]
+				.. (#lines[sr]:sub(ec + 1) > 0 and " " .. lines[er]:sub(ec + 1) or "")
 		else
 			-- cursor in separate lines
 			if mode == "\x16" then
@@ -260,21 +262,21 @@ function M.BlockComment()
 				-- in visual block mode
 				for i = sr, er do
 					lines[i] = lines[i]:sub(1, sc - 1)
-							.. comment[1]
-							.. lines[i]:sub(sc, ec)
-							.. comment[2]
-							.. lines[i]:sub(ec + 1)
+						.. comment[1]
+						.. lines[i]:sub(sc, ec)
+						.. comment[2]
+						.. lines[i]:sub(ec + 1)
 				end
 			else
 				-- in visual mode
 				lines[sr] = lines[sr]:sub(1, sc - 1)
-						.. " "
-						.. comment[1]
-						.. lines[sr]:sub(sc):gsub("^%s+", "")
+					.. " "
+					.. comment[1]
+					.. lines[sr]:sub(sc):gsub("^%s+", "")
 
 				lines[er] = lines[er]:sub(1, ec)
-						.. comment[2]
-						.. (#lines[er]:sub(ec + 1) > 0 and " " .. lines[er]:sub(ec + 1) or "")
+					.. comment[2]
+					.. (#lines[er]:sub(ec + 1) > 0 and " " .. lines[er]:sub(ec + 1) or "")
 			end
 		end
 
@@ -323,7 +325,10 @@ function M.CommentPaste()
 
 	for i, _ in ipairs(lines) do
 		if not lines[i]:match("^%s*$") then
-			lines[i] = indent .. comment[1] .. lines[i]:gsub("^" .. indent, "") .. comment[2]
+			lines[i] = indent
+				.. comment[1]
+				.. lines[i]:gsub("^" .. indent, "")
+				.. comment[2]
 		end
 	end
 
@@ -332,3 +337,5 @@ function M.CommentPaste()
 end
 
 return M
+-- Licensed under the GPL3 or later versions of the GPL license.
+-- See the LICENSE file in the project root for more information.
