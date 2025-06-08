@@ -75,5 +75,10 @@ for i=0,10 do
   -- print(i)
 end
 
+-- should remove empty comment lines
+-- require("nvim-lspconfig").setup()
+--
+-- require("nvim-lspconfig").setup()
+
 --- also test for block comments on `./tests/test.html`
 -- vim: set nofoldenable:

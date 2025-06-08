@@ -1,3 +1,7 @@
+local function trim(s)
+  return s:match"^%s*(.*)":match"(.-)%s*$"
+end
+
 local M = {}
 
 ---@type table kinds of comments
@@ -175,7 +179,7 @@ function M.Comment()
 
 			-- comment if theres any uncommented lines
 			if
-					comment == nil and not lines[i]:match("^%s*" .. vim.pesc(comments[1]))
+					comment == nil and not lines[i]:match("^%s*" .. vim.pesc(trim(comments[1])))
 			then
 				comment = true
 			end
@@ -195,9 +199,14 @@ function M.Comment()
 			if comment then
 				lines[i] = indent .. comments[1] .. lines[i] .. comments[2]
 			else
-				lines[i] = lines[i]
-						:gsub("^" .. vim.pesc(comments[1]), indent)
-						:gsub(vim.pesc(comments[2]) .. "$", "")
+				-- remove lines with enpty comment
+				if lines[i]:match("^%s*" .. vim.pesc(trim(comments[1])) .. "%s*$") then
+					lines[i] = ""
+				else
+					lines[i] = lines[i]
+							:gsub("^" .. vim.pesc(comments[1]), indent)
+							:gsub(vim.pesc(comments[2]) .. "$", "")
+				end
 			end
 		end
 	end
