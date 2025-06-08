@@ -133,7 +133,7 @@ end
 function M.Comment()
 	local bufnr = vim.api.nvim_get_current_buf()
 	local winnr = vim.api.nvim_get_current_win()
-	local comment = M.GetComment()
+	local comments = M.GetComment()
 	local count = vim.v.count
 	local _, sr, sc, _ = unpack(vim.fn.getpos("."))
 	local _, er, ec, _ = unpack(vim.fn.getpos("v"))
@@ -162,7 +162,7 @@ function M.Comment()
 
 	--- comment when used in multiple lines
 	local indent = lines[1]:match("^%s*")
-	local tmpindent, uncomment
+	local tmpindent, comment
 
 	-- check indentation and comment state of all lines for use later
 	for i, _ in ipairs(lines) do
@@ -173,11 +173,11 @@ function M.Comment()
 				indent = tmpindent
 			end
 
-			-- uncomment only when all the lines are commented
+			-- comment if theres any uncommented lines
 			if
-					uncomment == nil and not lines[i]:match("^%s*" .. vim.pesc(comment[1]))
+					comment == nil and not lines[i]:match("^%s*" .. vim.pesc(comments[1]))
 			then
-				uncomment = true
+				comment = true
 			end
 		end
 	end
@@ -186,18 +186,18 @@ function M.Comment()
 	for i, _ in ipairs(lines) do
 		if mode == "\x16" then
 			lines[i] = lines[i]:sub(1, sc - 1)
-					.. comment[1]
+					.. comments[1]
 					.. lines[i]:sub(sc)
-					.. comment[2]
+					.. comments[2]
 		elseif not lines[i]:match("^%s*$") then
 			lines[i] = lines[i]:gsub("^" .. indent, "")
 
-			if uncomment then
-				lines[i] = indent .. comment[1] .. lines[i] .. comment[2]
+			if comment then
+				lines[i] = indent .. comments[1] .. lines[i] .. comments[2]
 			else
 				lines[i] = lines[i]
-						:gsub("^" .. vim.pesc(comment[1]), indent)
-						:gsub(vim.pesc(comment[2]) .. "$", "")
+						:gsub("^" .. vim.pesc(comments[1]), indent)
+						:gsub(vim.pesc(comments[2]) .. "$", "")
 			end
 		end
 	end
