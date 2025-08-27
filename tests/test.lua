@@ -6,6 +6,8 @@
 a = "comment/uncomment a single line"
 
 function z()
+  -- should be able to uncomment empty line comments
+  --
 
   --- ^ start a comment when the line is empty, with indentation
 end

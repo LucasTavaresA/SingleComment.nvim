@@ -1,7 +1,3 @@
-local function trim(s)
-	return s:match("^%s*(.*)"):match("(.-)%s*$")
-end
-
 local M = {}
 
 ---@type table kinds of comments
@@ -153,13 +149,13 @@ function M.Comment()
 	end
 
 	-- account for counts
-	if count ~= 0 then
+	if count > 0 then
 		er = er + count - 1
 	end
 
 	local lines = vim.api.nvim_buf_get_lines(bufnr, sr - 1, er, false)
 
-	if #lines == 1 and (lines[1] == nil or lines[1] == "") then
+	if #lines == 1 and (lines[1] == nil or lines[1]:match("^%s*$")) then
 		--- comment when used in a single empty line
 		M.CommentAhead()
 		return
@@ -168,10 +164,10 @@ function M.Comment()
 	--- comment when used in multiple lines
 	local indent = lines[1]:match("^%s*")
 	local tmpindent, comment
-	local comment_patterns = { vim.pesc(trim(comments[1])), vim.pesc(comments[2]) }
+	local comment_patterns = { vim.pesc(vim.trim(comments[1])), vim.pesc(comments[2]) }
 
 	-- check indentation and comment state of all lines for use later
-	for i, _ in ipairs(lines) do
+	for i = 1, #lines do
 		if not lines[i]:match("^%s*$") then
 			-- gets the shallowest comment indentation for commenting
 			tmpindent = lines[i]:match("^%s*")
@@ -195,7 +191,7 @@ function M.Comment()
 	local empty_comment_pattern = "^%s*" .. comment_patterns[1] .. "%s*$"
 
 	-- comment or uncomment all lines
-	for i, _ in ipairs(lines) do
+	for i = 1, #lines do
 		if mode == "\x16" then
 			lines[i] = lines[i]:sub(1, sc - 1)
 				.. comments[1]
@@ -207,7 +203,7 @@ function M.Comment()
 			if comment then
 				lines[i] = indent .. comments[1] .. lines[i] .. comments[2]
 			else
-				-- remove lines with enpty comment
+				-- remove lines with empty comment
 				if lines[i]:match(empty_comment_pattern) then
 					lines[i] = ""
 				else
@@ -319,7 +315,7 @@ function M.CommentPaste()
 	local tmpindent
 
 	-- check indentation and comment state of all lines for use later
-	for i, _ in ipairs(lines) do
+	for i = 1, #lines do
 		if not lines[i]:match("^%s*$") then
 			-- gets the shallowest comment indentation for commenting
 			tmpindent = lines[i]:match("^%s*")
@@ -331,7 +327,7 @@ function M.CommentPaste()
 
 	local indent_pattern = "^" .. indent
 
-	for i, _ in ipairs(lines) do
+	for i = 1, #lines do
 		if not lines[i]:match("^%s*$") then
 			lines[i] = indent
 				.. comment[1]
