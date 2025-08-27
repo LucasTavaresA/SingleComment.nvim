@@ -168,6 +168,7 @@ function M.Comment()
 	--- comment when used in multiple lines
 	local indent = lines[1]:match("^%s*")
 	local tmpindent, comment
+	local comment_patterns = { vim.pesc(trim(comments[1])), vim.pesc(comments[2]) }
 
 	-- check indentation and comment state of all lines for use later
 	for i, _ in ipairs(lines) do
@@ -181,12 +182,17 @@ function M.Comment()
 			-- comment if theres any uncommented lines
 			if
 				comment == nil
-				and not lines[i]:match("^%s*" .. vim.pesc(trim(comments[1])))
+				and not lines[i]:match("^%s*" .. comment_patterns[1])
 			then
 				comment = true
 			end
 		end
 	end
+
+	local comment_start_pattern = "^" .. comment_patterns[1] .. " "
+	local comment_end_pattern = comment_patterns[2] .. "$"
+	local indent_pattern = "^" .. indent
+	local empty_comment_pattern = "^%s*" .. comment_patterns[1] .. "%s*$"
 
 	-- comment or uncomment all lines
 	for i, _ in ipairs(lines) do
@@ -196,18 +202,18 @@ function M.Comment()
 				.. lines[i]:sub(sc)
 				.. comments[2]
 		elseif not lines[i]:match("^%s*$") then
-			lines[i] = lines[i]:gsub("^" .. indent, "")
+			lines[i] = lines[i]:gsub(indent_pattern, "")
 
 			if comment then
 				lines[i] = indent .. comments[1] .. lines[i] .. comments[2]
 			else
 				-- remove lines with enpty comment
-				if lines[i]:match("^%s*" .. vim.pesc(trim(comments[1])) .. "%s*$") then
+				if lines[i]:match(empty_comment_pattern) then
 					lines[i] = ""
 				else
 					lines[i] = lines[i]
-						:gsub("^" .. vim.pesc(comments[1]), indent)
-						:gsub(vim.pesc(comments[2]) .. "$", "")
+						:gsub(comment_start_pattern, indent)
+						:gsub(comment_end_pattern, "")
 				end
 			end
 		end
@@ -323,11 +329,13 @@ function M.CommentPaste()
 		end
 	end
 
+	local indent_pattern = "^" .. indent
+
 	for i, _ in ipairs(lines) do
 		if not lines[i]:match("^%s*$") then
 			lines[i] = indent
 				.. comment[1]
-				.. lines[i]:gsub("^" .. indent, "")
+				.. lines[i]:gsub(indent_pattern, "")
 				.. comment[2]
 		end
 	end
